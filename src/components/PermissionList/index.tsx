@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import  { useState } from 'react';
 import { styled } from '../../stitches.config';
 import { TextField, Typography, Box, CircularProgress, List } from '@mui/material';
 import Header from '../../components/Header';
@@ -38,7 +38,7 @@ const PermissionList = () => {
 
   const handleConfirmDelete = async () => {
     if (permissionToDelete) {
-      await deletePermission(permissionToDelete);
+      await deletePermission(Number(permissionToDelete));
       handleDialogClose();
     }
   };
@@ -67,11 +67,11 @@ const PermissionList = () => {
             {error && <ErrorMessage message={error} />}
             {success && <SuccessMessage message={success} />}
             <List style={{ width: '100%' }}>
-              {permissions.map((permission: any) => (
+              {permissions.map((permission) => (
                 <PermissionItem
                   key={permission.id}
                   permission={permission}
-                  onDelete={handleDelete}
+                  onDelete={() => handleDelete(permission.id.toString())}
                 />
               ))}
             </List>

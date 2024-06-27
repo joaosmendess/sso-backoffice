@@ -7,7 +7,6 @@ import GroupIcon from '@mui/icons-material/Group';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
 
 const DrawerMenu = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const navigate = useNavigate();

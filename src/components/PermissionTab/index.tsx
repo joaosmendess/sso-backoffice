@@ -1,16 +1,28 @@
 import React from 'react';
-import { Tabs, Tab } from '@mui/material';
+import { Box } from '@mui/material';
 
-interface PermissionTabsProps {
-  tabValue: number;
-  handleTabChange: (event: React.ChangeEvent<{}>, newValue: number) => void;
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
 }
 
-const PermissionTabs: React.FC<PermissionTabsProps> = ({ tabValue, handleTabChange }) => (
-  <Tabs value={tabValue} onChange={handleTabChange} centered>
-    <Tab label="Principal" />
-    <Tab label="Módulos" />
-  </Tabs>
-);
+const TabPanel: React.FC<TabPanelProps> = ({ children, value, index, ...other }) => {
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
 
-export default PermissionTabs;
+export default TabPanel;

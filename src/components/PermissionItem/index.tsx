@@ -32,7 +32,7 @@ const PermissionItem: React.FC<PermissionItemProps> = ({ permission, onDelete })
   };
 
   const handleEdit = () => {
-    navigate(`/edit-permission/${permission.id}`);
+    navigate(`/gerenciar-permissoes/${permission.id}`);
   };
 
   const handleDelete = () => {

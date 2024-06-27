@@ -22,7 +22,7 @@ const StatusLabel = styled('span', {
 });
 
 const ListUsers = () => {
-  const [users, setUsers] = useState([
+  const [users] = useState([
     { name: 'Wesley Yann Gitoni de Oliveira', email: 'wesley.oliveira@ofm.com', status: 'Inativo' },
     { name: 'João Mendes da Silva', email: 'joao.silva@ofm.com.br', status: 'Ativo' },
     { name: 'Ryzzan Abbade Salman', email: 'ryzzan.salman@ofm.com', status: 'Ativo' }

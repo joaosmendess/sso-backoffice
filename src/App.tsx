@@ -1,13 +1,13 @@
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Header from './components/Header';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import ManageUser from './pages/User/ManageUser';
 import ListUsers from './pages/User/ListUser';
 import ManagePermissions from './pages/PermisionGroup/ManagePermisionGroups';
 import ListPermissions from './pages/PermisionGroup/ListPermisionGroups';
+import EditPermission from './pages/EditPermission';
 
-function App() {
+function App() { 
   const token = localStorage.getItem('token');
 
   return (
@@ -19,6 +19,7 @@ function App() {
         <Route path="/listar-usuario" element={token ? <ListUsers /> : <Navigate to="/" />} />
         <Route path="/gerenciar-permissoes" element={token ? <ManagePermissions /> : <Navigate to="/" />} />
         <Route path="/listar-permissoes" element={token ? <ListPermissions /> : <Navigate to="/" />} />
+        <Route path="/gerenciar-permissoes/:id" element={<EditPermission />} />
       </Routes>
     </Router>
   );

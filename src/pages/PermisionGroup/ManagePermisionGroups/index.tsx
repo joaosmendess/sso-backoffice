@@ -3,11 +3,9 @@ import { styled } from '../../../stitches.config';
 import { Box, Typography } from '@mui/material';
 import Header from '../../../components/Header';
 import PermissionForm from '../../../components/PermissionForm';
-import PermissionTabs from '../../../components/PermissionTab';
 import Error from '../../../components/Messages/ErrorMessage';
-import Info from '../../../components/Messages/InfoMessage';
 import Success from '../../../components/Messages/SuccessMessage';
-import { useManagePermissions } from '../../../hooks/useManagePermissions';
+import { usePermissions } from '../../../hooks/usePermission';
 
 const FormContainer = styled(Box, {
   display: 'flex',
@@ -21,26 +19,27 @@ const FormContainer = styled(Box, {
   margin: '0 auto',
 });
 
-const ManagePermissions = () => {
+const ManagePermissions: React.FC = () => {
   const {
     tabValue,
     groupName,
     setGroupName,
     selectedGroup,
     setSelectedGroup,
-    permissions,
-    setPermissions,
-    permissionGroups,
+    currentPermissions: permissions,
+    setCurrentPermissions: setPermissions,
+    permissions: permissionGroups,
+    modules,
     loading,
     error,
-    info,
     success,
     handleTabChange,
     handleSaveGroupName,
     handleSavePermissions,
     handlePermissionChange,
     handleGroupChange,
-  } = useManagePermissions();
+    handleModuleChange,
+  } = usePermissions();
 
   return (
     <>
@@ -53,25 +52,26 @@ const ManagePermissions = () => {
           Subtítulo conveniente aqui
         </Typography>
         {error && <Error message={error} />}
-        {info && <Info message={info} />}
         {success && <Success message={success} />}
-        <PermissionTabs tabValue={tabValue} handleTabChange={handleTabChange} />
         <PermissionForm
           tabValue={tabValue}
+          handleTabChange={handleTabChange}
           groupName={groupName}
           setGroupName={setGroupName}
           selectedGroup={selectedGroup}
           setSelectedGroup={setSelectedGroup}
-          permissions={permissions}
-          setPermissions={setPermissions}
+          currentPermissions={permissions}
+          setCurrentPermissions={setPermissions}
           permissionGroups={permissionGroups}
+          modules={modules}
           loading={loading}
-          moduleId={1}
-          empresaId={1}
           handleSaveGroupName={handleSaveGroupName}
           handleSavePermissions={handleSavePermissions}
           handlePermissionChange={handlePermissionChange}
           handleGroupChange={handleGroupChange}
+          handleModuleChange={handleModuleChange}
+          error={error}
+          success={success}
         />
       </FormContainer>
     </>

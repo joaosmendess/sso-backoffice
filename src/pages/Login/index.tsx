@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { styled } from '../../stitches.config';
-import { TextField, Button, Typography, Box, CircularProgress } from '@mui/material';
+import { TextField, Button, Typography, Box, CircularProgress, Alert } from '@mui/material';
 import { login } from '../../services/auth';
 import LoginHeader from '../../components/LoginHeader';
 import SessionExpiredDialog from '../../components/SessionExpiredDialog';
@@ -26,7 +26,7 @@ const Login = () => {
   const [step, setStep] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+ 
   const location = useLocation();
 
   useEffect(() => {
@@ -99,7 +99,11 @@ const Login = () => {
               margin="normal"
             />
           )}
-          {error && <Typography color="error">{error}</Typography>}
+          {error && (
+            <Alert severity="error" sx={{ marginBottom: '1rem' }}>
+              {error}
+            </Alert>
+          )}
           <LoginButton
             type="submit"
             variant="contained"
