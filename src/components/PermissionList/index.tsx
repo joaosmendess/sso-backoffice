@@ -1,12 +1,15 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { styled } from '../../stitches.config';
-import { TextField, Typography, Box, CircularProgress, List } from '@mui/material';
+import { TextField, Typography, Box,  List } from '@mui/material';
 import Header from '../../components/Header';
 import { usePermissions } from '../../hooks/usePermission';
 import ErrorMessage from '../Messages/ErrorMessage';
 import SuccessMessage from '../Messages/SuccessMessage';
 import PermissionItem from '../PermissionItem';
 import DeleteDialog from '../DeleteDialog';
+import LoadingDialog from '../LoadingDialog';
+import { useNavigate } from 'react-router-dom';
+import { PermissionGroup } from '../../types';
 
 const PermissionListContainer = styled(Box, {
   display: 'flex',
@@ -22,9 +25,10 @@ const PermissionListContainer = styled(Box, {
 });
 
 const PermissionList = () => {
-  const { permissions, loading, error, success, deleteLoading, deletePermission } = usePermissions();
+  const { permissionGroups, loading, error, success, deleteLoading, deletePermission, setCurrentPermissions, setSelectedGroup, setTabValue } = usePermissions();
   const [openDialog, setOpenDialog] = useState(false);
   const [permissionToDelete, setPermissionToDelete] = useState<null | string>(null);
+  const navigate = useNavigate();
 
   const handleDelete = (permissionId: string) => {
     setPermissionToDelete(permissionId);
@@ -43,12 +47,30 @@ const PermissionList = () => {
     }
   };
 
+  const handleEdit = (permissionGroup: PermissionGroup) => {
+    setCurrentPermissions({
+      id: permissionGroup.id,
+      name: permissionGroup.name,
+      get: 1, // Default value, assuming "Ler" is always enabled
+      post: 0, // Default values, adjust if necessary
+      put: 0, // Default values, adjust if necessary
+      delete: 0, // Default values, adjust if necessary
+      modules_id: 0, // Default values, adjust if necessary
+      permissions_groups_id: permissionGroup.id,
+      created_at: permissionGroup.created_at,
+      updated_at: permissionGroup.updated_at,
+    });
+    setSelectedGroup(permissionGroup.id);
+    setTabValue(1);
+    navigate(`/gerenciar-permissoes/${permissionGroup.id}`);
+  };
+
   return (
     <>
       <Header />
       <PermissionListContainer>
         <Typography variant="h5" component="h1" align="center" gutterBottom>
-          Listar permissões
+          Listar Grupo de Permissões
         </Typography>
         <Typography variant="body1" align="center" gutterBottom>
           Subtítulo conveniente aqui
@@ -60,29 +82,31 @@ const PermissionList = () => {
           fullWidth
           margin="normal"
         />
-        {loading ? (
-          <CircularProgress />
-        ) : (
+      
+       
+    
           <>
             {error && <ErrorMessage message={error} />}
             {success && <SuccessMessage message={success} />}
             <List style={{ width: '100%' }}>
-              {permissions.map((permission) => (
+              {permissionGroups.map((permissionGroup) => (
                 <PermissionItem
-                  key={permission.id}
-                  permission={permission}
-                  onDelete={() => handleDelete(permission.id.toString())}
+                  key={permissionGroup.id}
+                  permissionGroup={permissionGroup}
+                  onDelete={() => handleDelete(permissionGroup.id.toString())}
+                  onEdit={() => handleEdit(permissionGroup)}
                 />
               ))}
             </List>
           </>
-        )}
+              
         <DeleteDialog
           open={openDialog}
           onClose={handleDialogClose}
           onConfirm={handleConfirmDelete}
           loading={deleteLoading}
         />
+        <LoadingDialog open={loading || deleteLoading} message="Por favor, aguarde..." />
       </PermissionListContainer>
     </>
   );

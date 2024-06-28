@@ -6,6 +6,7 @@ import ListUsers from './pages/User/ListUser';
 import ManagePermissions from './pages/PermisionGroup/ManagePermisionGroups';
 import ListPermissions from './pages/PermisionGroup/ListPermisionGroups';
 import EditPermission from './pages/EditPermission';
+import LoginExpired from './components/LoginExpired';
 
 function App() { 
   const token = localStorage.getItem('token');
@@ -20,6 +21,7 @@ function App() {
         <Route path="/gerenciar-permissoes" element={token ? <ManagePermissions /> : <Navigate to="/" />} />
         <Route path="/listar-permissoes" element={token ? <ListPermissions /> : <Navigate to="/" />} />
         <Route path="/gerenciar-permissoes/:id" element={<EditPermission />} />
+        <Route path='/login?expired=true' element={<LoginExpired/>  } />
       </Routes>
     </Router>
   );

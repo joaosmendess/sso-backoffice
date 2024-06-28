@@ -10,13 +10,13 @@ import {
   CircularProgress,
   Checkbox,
   FormControlLabel,
-  Typography,
   Tabs,
   Tab,
   SelectChangeEvent,
 } from '@mui/material';
 import { styled } from '../../stitches.config';
 import TabPanel from '../PermissionTab';
+import { PermissionGroup, Module } from '../../types';
 
 const SaveButton = styled(Button, {
   marginTop: '1rem',
@@ -30,15 +30,7 @@ interface Permission {
   put: number;
   delete: number;
   modules_id: number;
-  empresa_id: number;
-  created_at: string;
-  updated_at: string;
-}
-
-interface Module {
-  id: number;
-  name: string;
-  empresa_id: number;
+  permissions_groups_id: number;
   created_at: string;
   updated_at: string;
 }
@@ -51,8 +43,8 @@ interface PermissionFormProps {
   selectedGroup: number | null;
   setSelectedGroup: (id: number | null) => void;
   currentPermissions: Permission;
-  setCurrentPermissions: (permissions: Permission) => void;
-  permissionGroups: Permission[];
+  setCurrentPermissions: React.Dispatch<React.SetStateAction<Permission>>;
+  permissionGroups: PermissionGroup[];
   modules: Module[];
   loading: boolean;
   handleSaveGroupName: (event: React.FormEvent) => void;
@@ -62,6 +54,7 @@ interface PermissionFormProps {
   handleModuleChange: (event: SelectChangeEvent<number | string>) => void;
   error: string | null;
   success: string | null;
+  isEditMode: boolean;
 }
 
 const PermissionForm: React.FC<PermissionFormProps> = ({
@@ -70,20 +63,17 @@ const PermissionForm: React.FC<PermissionFormProps> = ({
   groupName,
   setGroupName,
   currentPermissions,
+  
   modules,
   loading,
   handleSaveGroupName,
   handleSavePermissions,
   handlePermissionChange,
   handleModuleChange,
-  error,
-  success,
+  isEditMode
 }) => {
   return (
     <Box sx={{ maxWidth: '600px', margin: 'auto', mt: 4 }}>
-      {error && <Typography color="error" variant="body1">{error}</Typography>}
-      {success && <Typography color="primary" variant="body1">{success}</Typography>}
-
       <Tabs value={tabValue} onChange={handleTabChange} centered>
         <Tab label="Principais" />
         <Tab label="Módulos" />
@@ -100,13 +90,14 @@ const PermissionForm: React.FC<PermissionFormProps> = ({
             required
             fullWidth
             margin="normal"
+            disabled={isEditMode || loading}
           />
           <SaveButton
             type="submit"
             variant="contained"
             color="primary"
             fullWidth
-            disabled={loading}
+            disabled={isEditMode || loading}
           >
             {loading ? <CircularProgress size={24} /> : '+ Salvar'}
           </SaveButton>
@@ -115,7 +106,7 @@ const PermissionForm: React.FC<PermissionFormProps> = ({
 
       <TabPanel value={tabValue} index={1}>
         <form onSubmit={handleSavePermissions}>
-          <FormControl fullWidth margin="normal">
+          <FormControl fullWidth margin="normal" disabled={loading}>
             <InputLabel>Módulo</InputLabel>
             {loading ? (
               <CircularProgress />
@@ -144,6 +135,7 @@ const PermissionForm: React.FC<PermissionFormProps> = ({
                   checked={Boolean(currentPermissions.get)}
                   onChange={handlePermissionChange}
                   name="get"
+                  disabled={loading}
                 />
               }
               label="Ler"
@@ -154,6 +146,7 @@ const PermissionForm: React.FC<PermissionFormProps> = ({
                   checked={Boolean(currentPermissions.post)}
                   onChange={handlePermissionChange}
                   name="post"
+                  disabled={loading}
                 />
               }
               label="Criar"
@@ -164,6 +157,7 @@ const PermissionForm: React.FC<PermissionFormProps> = ({
                   checked={Boolean(currentPermissions.put)}
                   onChange={handlePermissionChange}
                   name="put"
+                  disabled={loading}
                 />
               }
               label="Editar"
@@ -174,6 +168,7 @@ const PermissionForm: React.FC<PermissionFormProps> = ({
                   checked={Boolean(currentPermissions.delete)}
                   onChange={handlePermissionChange}
                   name="delete"
+                  disabled={loading}
                 />
               }
               label="Apagar"

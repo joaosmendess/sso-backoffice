@@ -81,6 +81,7 @@ const ManageUser = () => {
           required
           fullWidth
           margin="normal"
+          disabled={true}
           />
         <TextField
           label="Usuário"
@@ -91,6 +92,8 @@ const ManageUser = () => {
           required
           fullWidth
           margin="normal"
+          disabled={true}
+
           />
         <FormControl fullWidth margin="normal">
           <InputLabel>Grupo de permissão</InputLabel>
@@ -98,6 +101,7 @@ const ManageUser = () => {
             value={permissionGroup}
             onChange={(e) => setPermissionGroup(e.target.value as string)}
             required
+            label='Grupo de permissão'
           >
             <MenuItem value=""><em>None</em></MenuItem>
             {permissionGroups.map((group: any) => (

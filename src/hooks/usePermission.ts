@@ -1,31 +1,19 @@
 import { useState, useEffect } from 'react';
-import { fetchPermissionGroups, fetchModules, createPermissionGroup, updatePermissionGroup, deletePermissionGroup } from '../services/auth';
+import {
+  createPermissionGroup,
+  updatePermissionGroup,
+  deletePermissionGroup,
+  fetchPermissionGroups,
+  fetchModules,
+  fetchUsers
+} from '../services/auth';
 import { SelectChangeEvent } from '@mui/material';
-
-interface Permission {
-  id: number;
-  name: string;
-  get: number;
-  post: number;
-  put: number;
-  delete: number;
-  modules_id: number;
-  empresa_id: number;
-  created_at: string;
-  updated_at: string;
-}
-
-interface Module {
-  id: number;
-  name: string;
-  empresa_id: number;
-  created_at: string;
-  updated_at: string;
-}
+import { PermissionGroup, Permission, Module, User } from '../types';
 
 export const usePermissions = () => {
-  const [permissions, setPermissions] = useState<Permission[]>([]);
+  const [permissionGroups, setPermissionGroups] = useState<PermissionGroup[]>([]);
   const [modules, setModules] = useState<Module[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -41,28 +29,29 @@ export const usePermissions = () => {
     put: 0,
     delete: 0,
     modules_id: 1,
-    empresa_id: 0,
+    permissions_groups_id: 0,
     created_at: '',
-    updated_at: '',
+    updated_at: ''
   });
-
-  const [empresaId] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const permissionData = await fetchPermissionGroups();
-        const moduleData = await fetchModules();
-        setPermissions(permissionData);
-        setModules(moduleData);
+        const [fetchedPermissionGroups, fetchedModules, fetchedUsers] = await Promise.all([
+          fetchPermissionGroups(),
+          fetchModules(),
+          fetchUsers()
+        ]);
+        setPermissionGroups(fetchedPermissionGroups);
+        setModules(fetchedModules);
+        setUsers(fetchedUsers);
       } catch (error) {
-        setError('Erro ao buscar dados');
-        console.error('Erro ao buscar dados', error);
+        setError('Erro ao carregar dados');
+        console.error('Erro ao carregar dados', error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
@@ -87,7 +76,7 @@ export const usePermissions = () => {
     setError(null);
     setSuccess(null);
     try {
-      const newGroup = await createPermissionGroup(groupName, currentPermissions, currentPermissions.modules_id, empresaId);
+      const newGroup = await createPermissionGroup({ name: groupName, permissions: currentPermissions }, currentPermissions.modules_id, currentPermissions.permissions_groups_id);
       setSelectedGroup(newGroup.id);
       setSuccess('Nome do grupo salvo com sucesso!');
       setTabValue(1);
@@ -106,7 +95,7 @@ export const usePermissions = () => {
     setSuccess(null);
     try {
       if (selectedGroup) {
-        await updatePermissionGroup(selectedGroup.toString(), groupName, currentPermissions);
+        await updatePermissionGroup(selectedGroup.toString(), currentPermissions, groupName);
         setSuccess('Permissões atualizadas com sucesso!');
         resetForm();
       }
@@ -118,14 +107,14 @@ export const usePermissions = () => {
     }
   };
 
-  const updatePermission = async (id: string, name: string, permissions: Permission) => {
+  const updatePermission = async (id: string, permissions: Permission, name: string) => {
     setLoading(true);
     setError(null);
     setSuccess(null);
     try {
-      await updatePermissionGroup(id, name, permissions);
-      const updatedPermissions = await fetchPermissionGroups();
-      setPermissions(updatedPermissions);
+      await updatePermissionGroup(id, permissions, name);
+      const updatedPermissionGroups = await fetchPermissionGroups();
+      setPermissionGroups(updatedPermissionGroups);
       setSuccess('Permissão atualizada com sucesso!');
     } catch (error) {
       console.error('Erro ao atualizar permissão', error);
@@ -145,9 +134,9 @@ export const usePermissions = () => {
       put: 0,
       delete: 0,
       modules_id: 1,
-      empresa_id: 0,
+      permissions_groups_id: 0,
       created_at: '',
-      updated_at: '',
+      updated_at: ''
     });
     setSelectedGroup(null);
     setTabValue(0);
@@ -162,21 +151,13 @@ export const usePermissions = () => {
 
   const handleGroupChange = (event: SelectChangeEvent<number | string>) => {
     const groupId = event.target.value as number;
-    const group = permissions.find((g) => g.id === groupId);
+    const group = permissionGroups.find((g) => g.id === groupId);
     if (group) {
       setSelectedGroup(group.id);
       setGroupName(group.name);
       setCurrentPermissions({
-        id: group.id,
-        name: group.name,
-        get: group.get || 1,
-        post: group.post || 0,
-        put: group.put || 0,
-        delete: group.delete || 0,
-        modules_id: group.modules_id || 1,
-        empresa_id: group.empresa_id,
-        created_at: group.created_at,
-        updated_at: group.updated_at,
+        ...currentPermissions,
+        permissions_groups_id: group.id
       });
     }
   };
@@ -193,7 +174,7 @@ export const usePermissions = () => {
     setDeleteLoading(true);
     try {
       await deletePermissionGroup(permissionId.toString());
-      setPermissions(permissions.filter(permission => permission.id !== permissionId));
+      setPermissionGroups(permissionGroups.filter(permission => permission.id !== permissionId));
       setSuccess('Permissão excluída com sucesso');
       setError(null);
     } catch (error) {
@@ -206,7 +187,8 @@ export const usePermissions = () => {
   };
 
   return {
-    permissions,
+    users,
+    permissionGroups,
     modules,
     loading,
     error,

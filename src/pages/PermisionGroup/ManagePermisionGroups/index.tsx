@@ -28,7 +28,7 @@ const ManagePermissions: React.FC = () => {
     setSelectedGroup,
     currentPermissions: permissions,
     setCurrentPermissions: setPermissions,
-    permissions: permissionGroups,
+    permissionGroups,
     modules,
     loading,
     error,
@@ -46,7 +46,7 @@ const ManagePermissions: React.FC = () => {
       <Header />
       <FormContainer>
         <Typography variant="h5" component="h1" align="center" gutterBottom>
-          Gerenciar Permissões
+          Gerenciar Grupo de Permissões
         </Typography>
         <Typography variant="body1" align="center" gutterBottom>
           Subtítulo conveniente aqui
@@ -71,8 +71,7 @@ const ManagePermissions: React.FC = () => {
           handleGroupChange={handleGroupChange}
           handleModuleChange={handleModuleChange}
           error={error}
-          success={success}
-        />
+          success={success} isEditMode={false}        />
       </FormContainer>
     </>
   );

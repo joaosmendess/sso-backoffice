@@ -17,7 +17,7 @@ const LoginExpired: React.FC = () => {
           Your session has expired. Please log in again.
         </Typography>
       )}
-      <Button variant="contained" color="primary" href="/login">
+      <Button variant="contained" color="primary" href="/">
         Go to Login
       </Button>
     </Box>

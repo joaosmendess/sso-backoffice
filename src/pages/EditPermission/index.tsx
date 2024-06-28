@@ -1,15 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { CircularProgress } from '@mui/material';
+
 import { usePermissions } from '../../hooks/usePermission';
 import Header from '../../components/Header';
 import PermissionForm from '../../components/PermissionForm';
+import LoadingDialog from '../../components/LoadingDialog';
 
 const EditPermission = () => {
   const { id } = useParams<{ id: string }>();
   
   const {
-    permissions,
+    permissionGroups,
     loading,
     setGroupName,
     setCurrentPermissions,
@@ -18,7 +19,6 @@ const EditPermission = () => {
     tabValue,
     groupName,
     currentPermissions,
-    
     modules,
     error,
     success,
@@ -30,22 +30,30 @@ const EditPermission = () => {
     handleModuleChange,
   } = usePermissions();
 
+  const [isEditing, setIsEditing] = useState(false);
+
   useEffect(() => {
-    const perm = permissions.find((p) => p.id === Number(id));
+    setIsEditing(true);
+    const perm = permissionGroups.find((p) => p.id === Number(id));
     if (perm) {
       setSelectedGroup(Number(id));
       setGroupName(perm.name);
       setCurrentPermissions({
-        ...perm,
-        modules_id: perm.modules_id,
+        id: perm.id,
+        name: perm.name,
+        get: 1, // Default value, assuming "Ler" is always enabled
+        post: 0, // Default values, adjust if necessary
+        put: 0, // Default values, adjust if necessary
+        delete: 0, // Default values, adjust if necessary
+        modules_id: 0, // Default values, adjust if necessary
+        permissions_groups_id: perm.id,
+        created_at: perm.created_at,
+        updated_at: perm.updated_at
       });
       setTabValue(1); // Define a aba "Módulos" como a aba inicial
     }
-  }, [id, permissions, setGroupName, setCurrentPermissions, setSelectedGroup, setTabValue]);
-
-  if (loading) {
-    return <CircularProgress />;
-  }
+    setIsEditing(false);
+  }, [id, permissionGroups, setGroupName, setCurrentPermissions, setSelectedGroup, setTabValue]);
 
   return (
     <>
@@ -59,7 +67,7 @@ const EditPermission = () => {
         setSelectedGroup={setSelectedGroup}
         currentPermissions={currentPermissions}
         setCurrentPermissions={setCurrentPermissions}
-        permissionGroups={permissions}
+        permissionGroups={permissionGroups}
         modules={modules}
         loading={loading}
         handleSaveGroupName={handleSaveGroupName}
@@ -69,7 +77,9 @@ const EditPermission = () => {
         handleModuleChange={handleModuleChange}
         error={error}
         success={success}
+        isEditMode={true}
       />
+      <LoadingDialog open={isEditing} message="Carregando dados, por favor aguarde..." />
     </>
   );
 };

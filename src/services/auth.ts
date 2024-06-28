@@ -1,8 +1,19 @@
 import axios from 'axios';
+import {
+  Permission,
+  User,
+  Module,
+  LoginResponse,
+  PermissionGroup,
+  PermissionGroupHasModule,
+  UserHasPermission,
+  Application
+} from '../types';
 
 const api = axios.create({
   baseURL: 'http://10.1.1.242:8989/api',
 });
+
 api.interceptors.request.use(
   config => {
     const token = localStorage.getItem('token');
@@ -27,62 +38,45 @@ api.interceptors.response.use(
   }
 );
 
-interface LoginResponse {
-  message: string;
-  token: string;
-  customerData: {
-    name: string;
-    userName: string;
-    empresa: string;
-    permissions: Array<{
-      application: {
-        name: string;
-        description: string;
-        developUrl: string;
-        homologUrl: string;
-        productionUrl: string;
-      };
-      modules: Array<{
-        name: string;
-        get: number;
-        post: number;
-        put: number;
-        delete: number;
-      }>;
-    }>;
-  };
-}
-
 export const login = async (userName: string, password: string): Promise<LoginResponse> => {
   const response = await api.post<LoginResponse>('/auth/login', { userName, password });
   return response.data;
 };
-
 
 export const createUser = async (name: string, userName: string, permissionGroup: string) => {
   const response = await api.post('/users', { name, userName, permissionGroup });
   return response.data;
 };
 
-export const fetchPermissionGroups = async () => {
-  try {
-    const response = await api.get('/permissions-groups');
-    console.log(response.data); // Verifique os dados retornados pela API
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching permission groups:', error);
-    throw error; // Propague o erro para que ele possa ser tratado onde a função é chamada
-  }
-};
-
-
-export const createPermissionGroup = async (name: string, permissions: { get: number, post: number, put: number, delete: number }, modules_id: number, empresa_id: number) => {
-  const response = await api.post('/permissions-groups', { name, ...permissions, modules_id, empresa_id });
+export const fetchUsers = async (name?: string, userName?: string): Promise<User[]> => {
+  const response = await api.get('/users', {
+    params: { name, userName }
+  });
   return response.data;
 };
 
-export const updatePermissionGroup = async (id: string, name: string, permissions: { get: number, post: number, put: number, delete: number }) => {
-  const response = await api.put(`/permissions-groups/${id}`, { name, ...permissions });
+export const fetchPermissionGroups = async (): Promise<PermissionGroup[]> => {
+  const response = await api.get('/permissions-groups');
+  return response.data;
+};
+
+export const updateUserPermissionGroup = async (userId: number, permissionGroup: string) => {
+  const response = await api.put(`/users/${userId}/permissions`, { permissionGroup });
+  return response.data;
+};
+
+export const fetchModules = async (): Promise<Module[]> => {
+  const response = await api.get('/modules');
+  return response.data;
+};
+
+export const createPermissionGroup = async ({ name, permissions }: { name: string, permissions: Permission }, modules_id: number, empresa_id: number) => {
+  const response = await api.post('/permissions-groups', { name, permissions, modules_id, empresa_id });
+  return response.data;
+};
+
+export const updatePermissionGroup = async (id: string, permissions: Permission, name: string) => {
+  const response = await api.put(`/permissions-groups/${id}`, { name, permissions });
   return response.data;
 };
 
@@ -91,32 +85,16 @@ export const deletePermissionGroup = async (id: string) => {
   return response.data;
 };
 
-
-// Buscar módulos
-export const fetchModules = async () => {
-  try {
-    const response = await api.get('/modules');
-    console.log(response.data); // Verifique os dados retornados pela API
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching modules:', error);
-    throw error; // Propague o erro para que ele possa ser tratado onde a função é chamada
-  }
-};
-
-// Criar módulo
 export const createModule = async (name: string, empresa_id: number) => {
   const response = await api.post('/modules', { name, empresa_id });
   return response.data;
 };
 
-// Atualizar módulo
 export const updateModule = async (id: string, name: string, empresa_id: number) => {
   const response = await api.put(`/modules/${id}`, { name, empresa_id });
   return response.data;
 };
 
-// Excluir módulo
 export const deleteModule = async (id: string) => {
   const response = await api.delete(`/modules/${id}`);
   return response.data;
@@ -124,7 +102,7 @@ export const deleteModule = async (id: string) => {
 
 export const verifyToken = async (token: string): Promise<boolean> => {
   try {
-    const response = await api.post('/auth/login', {
+    const response = await api.post('/auth/verify', {}, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -133,4 +111,21 @@ export const verifyToken = async (token: string): Promise<boolean> => {
   } catch (error) {
     return false;
   }
+};
+
+// New endpoints
+
+export const fetchPermissionGroupsHasModules = async (): Promise<PermissionGroupHasModule[]> => {
+  const response = await api.get('/permissions-groups-has-modules');
+  return response.data;
+};
+
+export const fetchUserHasPermissions = async (): Promise<UserHasPermission[]> => {
+  const response = await api.get('/user-has-permissions');
+  return response.data;
+};
+
+export const fetchApplications = async (): Promise<Application[]> => {
+  const response = await api.get('/applications');
+  return response.data;
 };
