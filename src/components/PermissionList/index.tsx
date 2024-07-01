@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { styled } from '../../stitches.config';
-import { TextField, Typography, Box,  List } from '@mui/material';
+import { TextField, Typography, Box, List } from '@mui/material';
 import Header from '../../components/Header';
 import { usePermissions } from '../../hooks/usePermission';
 import ErrorMessage from '../Messages/ErrorMessage';
@@ -25,7 +25,19 @@ const PermissionListContainer = styled(Box, {
 });
 
 const PermissionList = () => {
-  const { permissionGroups, loading, error, success, deleteLoading, deletePermission, setCurrentPermissions, setSelectedGroup, setTabValue } = usePermissions();
+  const {
+    permissionGroups,
+    loading,
+    initialLoading,
+    error,
+    success,
+    deleteLoading,
+    deletePermission,
+    setCurrentPermissions,
+    setSelectedGroup,
+    setTabValue,
+  } = usePermissions();
+  
   const [openDialog, setOpenDialog] = useState(false);
   const [permissionToDelete, setPermissionToDelete] = useState<null | string>(null);
   const navigate = useNavigate();
@@ -76,30 +88,28 @@ const PermissionList = () => {
           Subtítulo conveniente aqui
         </Typography>
         <TextField
-          label="Pesquise por nome ou e-mail"
+          label="Pesquise por nome"
           variant="outlined"
           type="search"
           fullWidth
           margin="normal"
         />
-      
-       
-    
-          <>
-            {error && <ErrorMessage message={error} />}
-            {success && <SuccessMessage message={success} />}
-            <List style={{ width: '100%' }}>
-              {permissionGroups.map((permissionGroup) => (
-                <PermissionItem
-                  key={permissionGroup.id}
-                  permissionGroup={permissionGroup}
-                  onDelete={() => handleDelete(permissionGroup.id.toString())}
-                  onEdit={() => handleEdit(permissionGroup)}
-                />
-              ))}
-            </List>
-          </>
-              
+        {error && <ErrorMessage message={error} />}
+        {success && <SuccessMessage message={success} />}
+        {initialLoading ? (
+          <LoadingDialog open={initialLoading} message="Carregando informações, por favor aguarde..." />
+        ) : (
+          <List style={{ width: '100%' }}>
+            {permissionGroups.map((permissionGroup) => (
+              <PermissionItem
+                key={permissionGroup.id}
+                permissionGroup={permissionGroup}
+                onDelete={() => handleDelete(permissionGroup.id.toString())}
+                onEdit={() => handleEdit(permissionGroup)}
+              />
+            ))}
+          </List>
+        )}
         <DeleteDialog
           open={openDialog}
           onClose={handleDialogClose}

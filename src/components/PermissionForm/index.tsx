@@ -7,7 +7,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  CircularProgress,
   Checkbox,
   FormControlLabel,
   Tabs,
@@ -16,6 +15,7 @@ import {
 } from '@mui/material';
 import { styled } from '../../stitches.config';
 import TabPanel from '../PermissionTab';
+import LoadingDialog from '../LoadingDialog';
 import { PermissionGroup, Module } from '../../types';
 
 const SaveButton = styled(Button, {
@@ -46,6 +46,7 @@ interface PermissionFormProps {
   setCurrentPermissions: React.Dispatch<React.SetStateAction<Permission>>;
   permissionGroups: PermissionGroup[];
   modules: Module[];
+  initialLoading: boolean;
   loading: boolean;
   handleSaveGroupName: (event: React.FormEvent) => void;
   handleSavePermissions: (event: React.FormEvent) => void;
@@ -63,17 +64,18 @@ const PermissionForm: React.FC<PermissionFormProps> = ({
   groupName,
   setGroupName,
   currentPermissions,
-  
   modules,
+  initialLoading,
   loading,
   handleSaveGroupName,
   handleSavePermissions,
   handlePermissionChange,
   handleModuleChange,
-  isEditMode
+  isEditMode,
 }) => {
   return (
     <Box sx={{ maxWidth: '600px', margin: 'auto', mt: 4 }}>
+      <LoadingDialog open={initialLoading} message="Carregando informações, por favor aguarde..." />
       <Tabs value={tabValue} onChange={handleTabChange} centered>
         <Tab label="Principais" />
         <Tab label="Módulos" />
@@ -99,7 +101,7 @@ const PermissionForm: React.FC<PermissionFormProps> = ({
             fullWidth
             disabled={isEditMode || loading}
           >
-            {loading ? <CircularProgress size={24} /> : '+ Salvar'}
+            {isEditMode ? 'Salvar' : '+ Salvar'}
           </SaveButton>
         </form>
       </TabPanel>
@@ -108,25 +110,21 @@ const PermissionForm: React.FC<PermissionFormProps> = ({
         <form onSubmit={handleSavePermissions}>
           <FormControl fullWidth margin="normal" disabled={loading}>
             <InputLabel>Módulo</InputLabel>
-            {loading ? (
-              <CircularProgress />
-            ) : (
-              <Select
-                label="Módulo"
-                value={currentPermissions.modules_id || ''}
-                onChange={handleModuleChange}
-                required
-              >
-                <MenuItem value="">
-                  <em>None</em>
+            <Select
+              label="Módulo"
+              value={currentPermissions.modules_id || ''}
+              onChange={handleModuleChange}
+              required
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {modules.map((module) => (
+                <MenuItem key={module.id} value={module.id}>
+                  {module.name}
                 </MenuItem>
-                {modules.map((module) => (
-                  <MenuItem key={module.id} value={module.id}>
-                    {module.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            )}
+              ))}
+            </Select>
           </FormControl>
           <Box display="flex" flexDirection="column" alignItems="start" width="100%">
             <FormControlLabel
@@ -135,7 +133,7 @@ const PermissionForm: React.FC<PermissionFormProps> = ({
                   checked={Boolean(currentPermissions.get)}
                   onChange={handlePermissionChange}
                   name="get"
-                  disabled={loading}
+                  disabled={true}
                 />
               }
               label="Ler"
@@ -181,7 +179,7 @@ const PermissionForm: React.FC<PermissionFormProps> = ({
             fullWidth
             disabled={loading}
           >
-            {loading ? <CircularProgress size={24} /> : '+ Salvar'}
+            {isEditMode ? 'Salvar' : '+ Salvar'}
           </SaveButton>
         </form>
       </TabPanel>

@@ -26,15 +26,11 @@ const Login = () => {
   const [step, setStep] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
- 
   const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const redirectTo = searchParams.get('redirect_to');
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      window.location.href = '/dashboard';
-    }
-  }, []);
+ 
 
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,9 +46,9 @@ const Login = () => {
     setError(null); // Limpar qualquer erro anterior
     try {
       const response = await login(userName, password);
-      if (response && response.token) {
-        localStorage.setItem('token', response.token);
-        window.location.href = '/dashboard';
+      if (response && response.token && redirectTo)  {
+      
+        window.location.href = `${redirectTo}?token=${response.token}`;
       } else {
         setError('Falha no login. Verifique suas credenciais.');
       }

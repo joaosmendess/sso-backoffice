@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { fetchPermissionGroups } from '../services/auth';
-import { PermissionGroup } from '../types';
+import { useState, useEffect } from "react";
+import { fetchPermissionGroups } from "../services/auth";
+import { PermissionGroup } from "../types";
 
 export const usePermissionData = () => {
   const [permissions, setPermissions] = useState<PermissionGroup[]>([]);
@@ -10,11 +10,11 @@ export const usePermissionData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const permissionData = await fetchPermissionGroups();
+        const permissionData: PermissionGroup[] = await fetchPermissionGroups();
         setPermissions(permissionData);
       } catch (error) {
-        setError('Erro ao buscar dados');
-        console.error('Erro ao buscar dados', error);
+        setError("Erro ao buscar dados");
+        console.error("Erro ao buscar dados", error);
       } finally {
         setLoading(false);
       }
