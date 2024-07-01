@@ -28,6 +28,11 @@ export interface Module {
   updated_at: string;
 }
 
+export interface GetUserResponse {
+  userName: string;
+  name:string;
+}
+
 export interface LoginResponse {
   token: string;
   customerData: {

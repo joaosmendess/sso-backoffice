@@ -8,10 +8,11 @@ import {
   PermissionGroupHasModule,
   UserHasPermission,
   Application,
+  GetUserResponse,
 } from "../types";
 
 const api = axios.create({
-  baseURL: "http://localhost:8989/api",
+  baseURL: "http://10.1.1.151:8989/api",
 });
 
 api.interceptors.request.use(
@@ -46,6 +47,10 @@ export const login = async (
     userName,
     password,
   });
+  return response.data;
+};
+export const getUser = async (userName: string, ): Promise<GetUserResponse> => {
+  const response = await api.get<GetUserResponse>(`/check-user/${userName}`);
   return response.data;
 };
 
