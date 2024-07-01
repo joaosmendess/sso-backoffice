@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled } from '../../../stitches.config';
 import { Box, Typography } from '@mui/material';
 import Header from '../../../components/Header';
 import PermissionForm from '../../../components/PermissionForm';
 import Error from '../../../components/Messages/ErrorMessage';
 import Success from '../../../components/Messages/SuccessMessage';
+import LoadingDialog from '../../../components/LoadingDialog';
 import { usePermissions } from '../../../hooks/usePermission';
 
 const FormContainer = styled(Box, {
@@ -20,6 +21,7 @@ const FormContainer = styled(Box, {
 });
 
 const ManagePermissions: React.FC = () => {
+  const [isEditMode, setIsEditMode] = useState(false); // Definindo o estado isEditMode
   const {
     tabValue,
     groupName,
@@ -31,6 +33,7 @@ const ManagePermissions: React.FC = () => {
     permissionGroups,
     modules,
     loading,
+    initialLoading,
     error,
     success,
     handleTabChange,
@@ -39,40 +42,52 @@ const ManagePermissions: React.FC = () => {
     handlePermissionChange,
     handleGroupChange,
     handleModuleChange,
-  } = usePermissions();
+  } = usePermissions({ isEditMode, setIsEditMode });
+
+  useEffect(() => {
+    // Verifique se o grupo está selecionado para definir o modo de edição
+    setIsEditMode(!!selectedGroup);
+  }, [selectedGroup]);
 
   return (
     <>
       <Header />
-      <FormContainer>
-        <Typography variant="h5" component="h1" align="center" gutterBottom>
-          Gerenciar Grupo de Permissões
-        </Typography>
-        <Typography variant="body1" align="center" gutterBottom>
-          Subtítulo conveniente aqui
-        </Typography>
-        {error && <Error message={error} />}
-        {success && <Success message={success} />}
-        <PermissionForm
-          tabValue={tabValue}
-          handleTabChange={handleTabChange}
-          groupName={groupName}
-          setGroupName={setGroupName}
-          selectedGroup={selectedGroup}
-          setSelectedGroup={setSelectedGroup}
-          currentPermissions={permissions}
-          setCurrentPermissions={setPermissions}
-          permissionGroups={permissionGroups}
-          modules={modules}
-          loading={loading}
-          handleSaveGroupName={handleSaveGroupName}
-          handleSavePermissions={handleSavePermissions}
-          handlePermissionChange={handlePermissionChange}
-          handleGroupChange={handleGroupChange}
-          handleModuleChange={handleModuleChange}
-          error={error}
-          success={success} isEditMode={false}        />
-      </FormContainer>
+      {initialLoading ? (
+        <LoadingDialog open={initialLoading} message="Carregando informações, por favor aguarde..." />
+      ) : (
+        <FormContainer>
+          <Typography variant="h5" component="h1" align="center" gutterBottom>
+            Gerenciar Grupo de Permissões
+          </Typography>
+          <Typography variant="body1" align="center" gutterBottom>
+            Subtítulo conveniente aqui
+          </Typography>
+          {error && <Error message={error} />}
+          {success && <Success message={success} />}
+          <PermissionForm
+            tabValue={tabValue}
+            handleTabChange={handleTabChange}
+            groupName={groupName}
+            setGroupName={setGroupName}
+            selectedGroup={selectedGroup}
+            setSelectedGroup={setSelectedGroup}
+            currentPermissions={permissions}
+            setCurrentPermissions={setPermissions}
+            permissionGroups={permissionGroups}
+            modules={modules}
+            loading={loading}
+            handleSaveGroupName={handleSaveGroupName}
+            handleSavePermissions={handleSavePermissions}
+            handlePermissionChange={handlePermissionChange}
+            handleGroupChange={handleGroupChange}
+            handleModuleChange={handleModuleChange}
+            error={error}
+            success={success}
+            isEditMode={isEditMode} // Passando isEditMode para PermissionForm
+            initialLoading={initialLoading}
+          />
+        </FormContainer>
+      )}
     </>
   );
 };
