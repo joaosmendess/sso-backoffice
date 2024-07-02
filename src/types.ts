@@ -14,7 +14,11 @@ export interface Permission {
 export interface User {
   id: number;
   name: string;
-  userName: string;
+  user: {
+    name: string;
+    userName: string;
+    status: string;
+  };
   status: string;
   created_at: string;
   updated_at: string;
@@ -30,7 +34,16 @@ export interface Module {
 
 export interface GetUserResponse {
   userName: string;
-  name:string;
+  name: string;
+
+  empresa: {
+    name: string;
+    cnpj: string;
+    sso_name: string;
+    client_id: string;
+    client_secret: string;
+    tenant_id: string;
+  };
 }
 
 export interface LoginResponse {
