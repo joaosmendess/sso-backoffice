@@ -1,6 +1,6 @@
 
 import { styled } from '../../stitches.config';
-import logo from '../../assets/logo 1.png'
+import logo from '../../assets/trava-de-seguranca.webp'
 
 
 
@@ -15,7 +15,8 @@ const LoginHeader = () => {
 
   return (
     <>
-      <Logo src={logo} alt="Logo"   />
+      <Logo src={logo} alt="Logo" loading='lazy'   />
+      
       
     </>
   );

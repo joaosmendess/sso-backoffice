@@ -141,6 +141,11 @@ export const deleteModule = async (id: string) => {
   return response.data;
 };
 
+export const validateToken = async (token:string) => {
+  const response = await axios.post('http://localhost:8989/auth/validate-jwt', { token });
+  return response.data;
+};
+
 export const verifyToken = async (token: string): Promise<boolean> => {
   try {
     const response = await api.post(

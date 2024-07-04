@@ -24,6 +24,7 @@ export const FormContainer = styled(Box)(({ theme }) => ({
 export const HeaderContainer = styled(Box)({
   alignSelf: 'flex-start',
   marginBottom: '20px',
+  marginTop: '20px',
 });
 
 export const ButtonContainer = styled(Box)({

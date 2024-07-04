@@ -1,7 +1,9 @@
+// VerifySSO.tsx
+
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Typography, LinearProgress, Alert, Button } from '@mui/material';
-import { getUser } from '../../services/auth';
+import { validateToken, getUser } from '../../services/auth';
 import LoginHeader from '../../components/LoginHeader';
 import { FormContainer, HeaderContainer, ButtonContainer, InputField, Form } from './styles';
 
@@ -15,13 +17,27 @@ const VerifySSO: React.FC = () => {
   const redirectTo = searchParams.get('redirect_to');
 
   useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
+    const handleMessage = async (event: MessageEvent) => {
       if (event.origin !== 'http://localhost:8989') return;
 
-      const { token } = event.data;
-      if (token) {
-        localStorage.setItem('token', token);
-        window.location.href = redirectTo || '/';
+      const { token, customerData } = event.data;
+      console.log('Received token and customerData:', token, customerData);
+
+      if (token && customerData) {
+        try {
+          const validationResponse = await validateToken(token);
+          if (validationResponse.message === 'Usuário está registrado em nossa base de dados') {
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(customerData));
+            
+            window.opener.postMessage({ token, customerData }, '*');
+            window.location.href = redirectTo || '/';
+          } else {
+            setError('Falha na validação do token. Verifique suas credenciais.');
+          }
+        } catch (err) {
+          setError('Falha na validação do token. Verifique suas credenciais.');
+        }
       } else {
         setError('Falha no login. Verifique suas credenciais.');
       }
@@ -47,7 +63,7 @@ const VerifySSO: React.FC = () => {
       const user = await getUser(userName);
       if (user) {
         if (user.empresa.sso_name) {
-          const ssoUrl = `http://localhost:8989/auth/redirect?redirect_to=${encodeURIComponent(window.location.origin + '/auth/callback?redirect_to=' + redirectTo)}`;
+          const ssoUrl = `http://localhost:8989/auth/redirect?redirect_to=${encodeURIComponent(window.location.origin + redirectTo)}`;
           window.location.href = ssoUrl;
         } else {
           setError('O usuário não tem permissão de entrar com esse SSO. Volte para a tela anterior e faça login com usuário e senha.');
@@ -65,8 +81,8 @@ const VerifySSO: React.FC = () => {
   return (
     <FormContainer>
       {loading && <LinearProgress sx={{ width: '100%', position: 'absolute', top: 0 }} />}
+      <LoginHeader />
       <HeaderContainer>
-        <LoginHeader />
         <Typography variant="h5" component="h1" align="left" gutterBottom>
           Verificação de SSO
         </Typography>
