@@ -79,8 +79,10 @@ export const LoginButton = styled(Button)({
 });
 
 export const SSOButton = styled(Button)({
-  whiteSpace: 'wrap',
-  width: '80%',
+  marginLeft:'5px',
+  
+  borderRadius:'45px',
+  
 });
 
 export const InputField = styled(TextField)({

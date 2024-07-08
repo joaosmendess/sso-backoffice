@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LinearProgress, Alert, useMediaQuery, useTheme, Box, IconButton, InputAdornment } from '@mui/material';
+import { LinearProgress, Alert, useMediaQuery, useTheme, Box, IconButton, InputAdornment, Typography } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { login } from '../../services/auth';
 import LoginHeader from '../../components/LoginHeader';
-import logo from '../../assets/sso-logo.png';
-import background from '../../assets/background-login-transformed-fotor-2024070310319.webp';
+import logo from '../../assets/key.png';
+import background from '../../../assets/richard-horvath-cPccYbPrF-A-unsplash.jpg'; // Adicione seu fundo aqui
+
+
+import animated from '../../assets/41q1lZI600kL6G91Wb.mp4'
 
 import {
   FormContainer,
@@ -77,7 +80,7 @@ const Login: React.FC = () => {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        backgroundColor: '#f5f5f5',
+       
         opacity: 0,
         transform: 'translateY(50px)',
         animation: 'fadeIn 0.5s forwards',
@@ -94,8 +97,12 @@ const Login: React.FC = () => {
         
         {!isMobile && !isTablet && (
           <LeftContainer>
+     
             <ImageContainer>
-              <img src={background} alt="Chart and person" style={{ width: '100%', height: 'auto' }} loading='lazy'/>
+            <video width="100%" height="auto" autoPlay loop muted>
+              <source src={animated} type="video/mp4" />
+              Seu navegador nao suporta tag de video
+            </video>
             </ImageContainer>
           </LeftContainer>
         )}
@@ -108,6 +115,7 @@ const Login: React.FC = () => {
           </HeaderContainer>
           <Form onSubmit={handleLogin}>
             <InputField
+              id="userName"
               label="Usuário"
               variant="outlined"
               type="text"
@@ -117,6 +125,7 @@ const Login: React.FC = () => {
               margin="normal"
             />
             <InputField
+              id="password"
               label="Senha"
               variant="outlined"
               type={showPassword ? 'text' : 'password'}
@@ -146,6 +155,7 @@ const Login: React.FC = () => {
             )}
             <ButtonContainer>
               <LoginButton
+                id="loginButton"
                 type="submit"
                 variant="contained"
                 color="primary"
@@ -153,14 +163,19 @@ const Login: React.FC = () => {
               >
                 Entrar
               </LoginButton>
+              <Typography variant="body2" color="textSecondary" align="center" sx={{ marginY: 1 }}>
+            ou continue via SSO externo
+          </Typography>
+
+
               <SSOButton
                 variant="contained"
                 color="primary"
-                startIcon={<img src={logo} alt="SSO Logo" style={{ height: 30 }} />}
+                startIcon={<img src={logo} alt="SSO Logo" style={{ height: 30 , marginLeft:10}} />}
                 onClick={handleSSOPageNavigation}
-              >
-                SSO Externo
-              </SSOButton>
+                />
+                
+              
             </ButtonContainer>
           </Form>
         </RightContainer>

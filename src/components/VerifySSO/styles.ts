@@ -10,7 +10,7 @@ export const FormContainer = styled(Box)(({ theme }) => ({
   borderRadius: '8px',
   width: '100%',
   maxWidth: '400px',
-  margin: '150px auto',
+  margin: ' auto',
   boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)',
   backgroundColor:"#FFFFFF",
   position: 'relative', // Adicionado para posicionamento do LinearProgress

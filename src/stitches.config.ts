@@ -1,4 +1,5 @@
 import { createStitches } from '@stitches/react';
+import background from './assets/richard-horvath-cPccYbPrF-A-unsplash.jpg';
 
 export const { getCssText, styled, globalCss } = createStitches({
   theme: {
@@ -10,5 +11,6 @@ export const { getCssText, styled, globalCss } = createStitches({
       body: 'system-ui, sans-serif',
       heading: 'Georgia, serif',
     },
+    
   },
 });
