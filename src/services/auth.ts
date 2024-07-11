@@ -80,6 +80,17 @@ export const fetchUsers = async (
   return response.data;
 };
 
+export const register = async (name: string, userName: string, invitationEmail: string, password: string) => {
+  const response = await api.post("/auth/register", {
+    name,
+    userName,
+    invitationEmail,
+    password,
+  });
+  return response.data;
+};
+
+
 export const fetchPermissionGroups = async (): Promise<PermissionGroup[]> => {
   const response = await api.get("/permissions-groups");
   return response.data;

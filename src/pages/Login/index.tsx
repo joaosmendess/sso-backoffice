@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LinearProgress, Alert, useMediaQuery, useTheme, Box, IconButton, InputAdornment, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import { LinearProgress, Alert, useMediaQuery, useTheme, Box, IconButton, InputAdornment, Typography, Button } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { login } from '../../services/auth';
 import LoginHeader from '../../components/LoginHeader';
 import logo from '../../assets/key.png';
-import background from '../../../assets/richard-horvath-cPccYbPrF-A-unsplash.jpg'; // Adicione seu fundo aqui
 
 
-import animated from '../../assets/41q1lZI600kL6G91Wb.mp4'
+import animated from '../../assets/olShi6AW2pQj75e9EX (1).mp4';
 
 import {
   FormContainer,
@@ -64,6 +63,10 @@ const Login: React.FC = () => {
   const handleSSOPageNavigation = () => {
     navigate('/verify-sso');
   };
+  const handleRegisterNavigation = () => {
+    navigate('/register');
+  };
+
 
   const handleClickShowPassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -163,9 +166,6 @@ const Login: React.FC = () => {
               >
                 Entrar
               </LoginButton>
-              <Typography variant="body2" color="textSecondary" align="center" sx={{ marginY: 1 }}>
-            ou continue via SSO externo
-          </Typography>
 
 
               <SSOButton
@@ -173,7 +173,15 @@ const Login: React.FC = () => {
                 color="primary"
                 startIcon={<img src={logo} alt="SSO Logo" style={{ height: 30 , marginLeft:10}} />}
                 onClick={handleSSOPageNavigation}
-                />
+                >
+                  entrar com SSO externo
+                </SSOButton>
+              <Typography variant="body2" color="textSecondary" align="center" sx={{ marginY: 0.5 }}>
+            Ainda não possue conta?
+          </Typography>
+          <Button variant='text' color='primary'  onClick={handleRegisterNavigation}>
+                Registrar-se
+              </Button>
                 
               
             </ButtonContainer>
