@@ -173,7 +173,7 @@ const Register: React.FC = () => {
               <Typography variant="body2" color="textSecondary" align="center" sx={{ marginY: 0.5 }}>
                 Já tem uma conta?
               </Typography>
-              <Button variant='text' color='primary' onClick={() => navigate('/login')}>
+              <Button variant='text' color='primary' onClick={() => navigate('/')}>
                 Entrar
               </Button>
             </ButtonContainer>

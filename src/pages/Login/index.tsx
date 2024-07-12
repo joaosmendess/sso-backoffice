@@ -1,11 +1,11 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+// src/pages/Login.tsx
+import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import { LinearProgress, Alert, useMediaQuery, useTheme, Box, IconButton, InputAdornment, Typography, Button } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { login } from '../../services/auth';
 import LoginHeader from '../../components/LoginHeader';
 import logo from '../../assets/key.png';
-
 
 import animated from '../../assets/olShi6AW2pQj75e9EX (1).mp4';
 
@@ -31,10 +31,7 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const searchParams = new URLSearchParams(location.search);
-  const redirectTo = searchParams.get('redirect_to');
+  
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -48,8 +45,11 @@ const Login: React.FC = () => {
     try {
       const response = await login(userName, password);
       if (response && response.token) {
-        // Redireciona para a aplicação principal com o token na URL
-        window.location.href = `${redirectTo}?token=${response.token}`;
+        // Armazena o token e o customerData no localStorage
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('customerData', JSON.stringify(response.customerData));
+        // Redireciona para a página de seleção de produtos
+        navigate('/select-product');
       } else {
         setError('Falha no login. Verifique suas credenciais.');
       }
@@ -66,7 +66,6 @@ const Login: React.FC = () => {
   const handleRegisterNavigation = () => {
     navigate('/register');
   };
-
 
   const handleClickShowPassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -166,7 +165,6 @@ const Login: React.FC = () => {
               >
                 Entrar
               </LoginButton>
-
 
               <SSOButton
                 variant="contained"

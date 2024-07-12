@@ -1,19 +1,22 @@
 import { globalCss } from './stitches.config';
-import background from './assets/richard-horvath-cPccYbPrF-A-unsplash.jpg';
 
 const globalStyles = globalCss({
   '*': { margin: 0, padding: 0, boxSizing: 'border-box' },
   body: { 
     fontFamily: '$body', 
-    background: `url(${background}) no-repeat center center`,
-    backgroundSize: 'cover',
-    height:'100vh',
-    display:'flex',
-    justifyContent:'center',
-    alignItems:'center'
+    backgroundColor: '#004d61', // Azul petróleo sólido
+    height: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: '#ffffff', // Cor do texto padrão (branco)
+    overflow: 'hidden',
     
-   
-  }
+  },
+  '#root': {
+    position: 'relative',
+    zIndex: 1,
+  },
 });
 
 export default globalStyles;
