@@ -4,9 +4,9 @@ import Login from './pages/Login';
 import VerifySSO from './components/VerifySSO';
 import Register from './pages/Register';
 import SelectProduct from './pages/Authorized/SelectProduct';
-import Callback from './pages/Callback'; // Importando Callback
+import Callback from './pages/Callback';
 import ProtectedRoute from './components/ProtectedRoute';
-import PublicRoute from './components/PublicRoute'; // Importando PublicRoute
+import PublicRoute from './components/PublicRoute';
 import globalStyles from './globalStyles';
 
 const App: React.FC = () => {
@@ -16,18 +16,18 @@ const App: React.FC = () => {
     <Router>
       <Routes>
         <Route
-          path="/"
+          path="/login/:companyName"
           element={
             <PublicRoute>
               <Login />
             </PublicRoute>
           }
         />
-        <Route path="/verify-sso" element={<VerifySSO />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/callback" element={<Callback />} /> {/* Adicionando a rota Callback */}
+        <Route path="/verify-sso/:companyName" element={<VerifySSO />} />
+        <Route path="/register/:companyName" element={<Register />} />
+        <Route path="/callback/:companyName" element={<Callback />} />
         <Route
-          path="/select-product"
+          path="/select-product/:companyName"
           element={
             <ProtectedRoute>
               <SelectProduct />

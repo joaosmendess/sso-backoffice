@@ -1,8 +1,14 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const tokenThresholdLength = 200; // Defina o valor apropriado para o comprimento do token
+const tokenThresholdLength = 1245; // Defina o valor apropriado para o comprimento do token
 
+/**
+ * Componente de Callback para lidar com a resposta do SSO.
+ * 
+ * @component
+ * @returns {null} Este componente não precisa renderizar nada.
+ */
 const CallbackPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -12,6 +18,12 @@ const CallbackPage = () => {
     const token = urlParams.get('token');
     console.log('Captured token:', token); // Log para depuração
 
+    /**
+     * Decodifica um token JWT.
+     * 
+     * @param {string} token - O token JWT a ser decodificado.
+     * @returns {Object|null} O payload decodificado do token ou null em caso de erro.
+     */
     const decodeToken = (token: string) => {
       try {
         const base64Url = token.split('.')[1];
@@ -26,6 +38,11 @@ const CallbackPage = () => {
       }
     };
 
+    /**
+     * Valida o token JWT com o servidor.
+     * 
+     * @param {string} token - O token JWT a ser validado.
+     */
     const handleTokenValidation = async (token: string) => {
       try {
         const response = await fetch('http://localhost:8989/api/auth/validate-jwt', {

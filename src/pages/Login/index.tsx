@@ -1,14 +1,11 @@
-// src/pages/Login.tsx
-import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
-import { LinearProgress, Alert, useMediaQuery, useTheme, Box, IconButton, InputAdornment, Typography, Button } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
+import { LinearProgress, Alert, useMediaQuery, useTheme, Box, IconButton, InputAdornment, Typography, Button, Link } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { login } from '../../services/auth';
 import LoginHeader from '../../components/LoginHeader';
 import logo from '../../assets/key.png';
-
 import animated from '../../assets/olShi6AW2pQj75e9EX (1).mp4';
-
 import {
   FormContainer,
   HeaderContainer,
@@ -31,8 +28,7 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  
-
+  const { companyName } = useParams<{ companyName: string }>();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
@@ -45,11 +41,9 @@ const Login: React.FC = () => {
     try {
       const response = await login(userName, password);
       if (response && response.token) {
-        // Armazena o token e o customerData no localStorage
         localStorage.setItem('token', response.token);
         localStorage.setItem('customerData', JSON.stringify(response.customerData));
-        // Redireciona para a página de seleção de produtos
-        navigate('/select-product');
+        navigate(`/select-product/${companyName}`);
       } else {
         setError('Falha no login. Verifique suas credenciais.');
       }
@@ -61,10 +55,15 @@ const Login: React.FC = () => {
   };
 
   const handleSSOPageNavigation = () => {
-    navigate('/verify-sso');
+    navigate(`/verify-sso/${companyName}`);
   };
+
   const handleRegisterNavigation = () => {
-    navigate('/register');
+    navigate(`/register/${companyName}`);
+  };
+
+  const handleForgotPasswordNavigation = () => {
+    navigate(`/forgot-password/${companyName}`);
   };
 
   const handleClickShowPassword = () => {
@@ -82,7 +81,6 @@ const Login: React.FC = () => {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-       
         opacity: 0,
         transform: 'translateY(50px)',
         animation: 'fadeIn 0.5s forwards',
@@ -99,12 +97,11 @@ const Login: React.FC = () => {
         
         {!isMobile && !isTablet && (
           <LeftContainer>
-     
             <ImageContainer>
-            <video width="100%" height="auto" autoPlay loop muted>
-              <source src={animated} type="video/mp4" />
-              Seu navegador nao suporta tag de video
-            </video>
+              <video width="100%" height="auto" autoPlay loop muted>
+                <source src={animated} type="video/mp4" />
+                Seu navegador nao suporta tag de video
+              </video>
             </ImageContainer>
           </LeftContainer>
         )}
@@ -117,7 +114,7 @@ const Login: React.FC = () => {
           </HeaderContainer>
           <Form onSubmit={handleLogin}>
             <InputField
-              id="userName"
+              id="userNameInput"
               label="Usuário"
               variant="outlined"
               type="text"
@@ -127,7 +124,7 @@ const Login: React.FC = () => {
               margin="normal"
             />
             <InputField
-              id="password"
+              id="passwordInput"
               label="Senha"
               variant="outlined"
               type={showPassword ? 'text' : 'password'}
@@ -169,20 +166,29 @@ const Login: React.FC = () => {
               <SSOButton
                 variant="contained"
                 color="primary"
-                startIcon={<img src={logo} alt="SSO Logo" style={{ height: 30 , marginLeft:10}} />}
+                startIcon={<img src={logo} alt="SSO Logo" style={{ height: 30, marginLeft: 10 }} />}
                 onClick={handleSSOPageNavigation}
-                >
-                  entrar com SSO externo
-                </SSOButton>
-              <Typography variant="body2" color="textSecondary" align="center" sx={{ marginY: 0.5 }}>
-            Ainda não possue conta?
-          </Typography>
-          <Button variant='text' color='primary'  onClick={handleRegisterNavigation}>
+              >
+                entrar com SSO externo
+              </SSOButton>
+              <Typography variant="body2" color="textSecondary" align="center" sx={{ marginY: 0}}>
+                Ainda não possui conta?
+              </Typography>
+              <Button variant='text' color='primary' onClick={handleRegisterNavigation}>
                 Registrar-se
               </Button>
-                
-              
             </ButtonContainer>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
+              <Link 
+                component="button" 
+                variant="body2" 
+                onClick={handleForgotPasswordNavigation} 
+                underline="none"
+                sx={{ textAlign: 'right' }}
+              >
+                Esqueceu sua senha?
+              </Link>
+            </Box>
           </Form>
         </RightContainer>
       </FormContainer>

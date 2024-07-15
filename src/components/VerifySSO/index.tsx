@@ -83,10 +83,10 @@ const VerifySSO: React.FC = () => {
       {loading && <LinearProgress sx={{ width: '100%', position: 'absolute', top: 0 }} />}
       <LoginHeader />
       <HeaderContainer>
-        <Typography variant="h5" component="h1" align="left" gutterBottom>
+        <Typography variant="h5" component="h1" align="left" gutterBottom color='InfoText'>
           Verificação de SSO
         </Typography>
-        <Typography variant="body2" align="left" gutterBottom>
+        <Typography variant="body2" align="left" gutterBottom color='InfoText' >
           Insira seu nome de usuário para verificar se você pode usar o SSO da sua empresa
         </Typography>
       </HeaderContainer>
@@ -115,6 +115,7 @@ const VerifySSO: React.FC = () => {
             Verificar Usuário
           </Button>
         </ButtonContainer>
+      
       </Form>
     </FormContainer>
   );

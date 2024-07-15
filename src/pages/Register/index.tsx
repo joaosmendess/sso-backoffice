@@ -1,8 +1,8 @@
-import { useNavigate } from 'react-router-dom';
-import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { LinearProgress, Alert, useMediaQuery, useTheme, Box, IconButton, InputAdornment, Typography, Button } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { register } from '../../services/auth'; // Importando a função de registro
+import { register, getPublicCompany } from '../../services/auth';
 import LoginHeader from '../../components/LoginHeader';
 
 import animated from '../../assets/olShi6AW2pQj75e9EX (1).mp4';
@@ -12,7 +12,6 @@ import {
   HeaderContainer,
   ButtonContainer,
   LoginButton,
-  
   InputField,
   Form,
   ImageContainer,
@@ -29,21 +28,40 @@ const Register: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [companyId, setCompanyId] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const { companyName } = useParams<{ companyName: string }>();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
+  useEffect(() => {
+    if (companyName) {
+      getPublicCompany(companyName)
+        .then(response => {
+          setCompanyId(response.id);
+        })
+        .catch(error => {
+          console.error('Error fetching company:', error);
+          setError('Erro ao buscar dados da empresa.');
+        });
+    }
+  }, [companyName]);
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!companyId) {
+      setError('ID da empresa não encontrado.');
+      return;
+    }
     setLoading(true);
     setError(null);
 
     try {
-      const response = await register(name, userName, invitationEmail, password);
+      const response = await register(name, userName, invitationEmail, password, companyId);
       if (response) {
-        navigate('/login');
+        navigate(`/login/${companyName}`);
       } else {
         setError('Falha no registro. Verifique suas informações.');
       }
@@ -102,7 +120,7 @@ const Register: React.FC = () => {
           </HeaderContainer>
           <Form onSubmit={handleRegister}>
             <InputField
-              id="name"
+              id="nameInput"
               label="Nome"
               variant="outlined"
               type="text"
@@ -112,8 +130,8 @@ const Register: React.FC = () => {
               margin="normal"
             />
             <InputField
-              id="userName"
-              label=" Usuário"
+              id="userNameInput"
+              label="Usuário"
               variant="outlined"
               type="text"
               value={userName}
@@ -122,7 +140,7 @@ const Register: React.FC = () => {
               margin="normal"
             />
             <InputField
-              id="invitationEmail"
+              id="emailInput"
               label="Email"
               variant="outlined"
               type="email"
@@ -132,7 +150,7 @@ const Register: React.FC = () => {
               margin="normal"
             />
             <InputField
-              id="password"
+              id="passwordInput"
               label="Senha"
               variant="outlined"
               type={showPassword ? 'text' : 'password'}
@@ -173,7 +191,7 @@ const Register: React.FC = () => {
               <Typography variant="body2" color="textSecondary" align="center" sx={{ marginY: 0.5 }}>
                 Já tem uma conta?
               </Typography>
-              <Button variant='text' color='primary' onClick={() => navigate('/')}>
+              <Button variant='text' color='primary' onClick={() => navigate(`/login/${companyName}`)}>
                 Entrar
               </Button>
             </ButtonContainer>

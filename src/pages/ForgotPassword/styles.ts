@@ -27,6 +27,7 @@ export const LeftContainer = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   width: '50%',
+  padding: '2rem',
   [theme.breakpoints.down('md')]: {
     display: 'none',
   },
@@ -69,18 +70,6 @@ export const ButtonContainer = styled(Box)({
   width: '100%',
   marginTop: '1rem',
   gap: '15px',
-});
-
-export const LoginButton = styled(Button)({
-  width: '80%',
-
-});
-
-export const SSOButton = styled(Button)({
-  marginLeft:'5px',
-  
-  borderRadius:'45px',
-  
 });
 
 export const InputField = styled(TextField)({

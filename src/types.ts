@@ -110,3 +110,15 @@ export interface Application {
   productionUrl: string;
   empresa_id: number;
 }
+
+export interface Company {
+  id: number;
+  name: string;
+  cnpj: string;
+  sso_name: string | null;
+  client_id: string | null;
+  client_secret: string | null;
+  tenant_id: string | null;
+  created_at: string;
+  updated_at: string;
+}

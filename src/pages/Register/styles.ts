@@ -19,6 +19,7 @@ export const FormContainer = styled(Box)(({ theme }) => ({
     padding: '1rem',
     maxWidth: '90%',
   },
+ 
 }));
 
 export const LeftContainer = styled(Box)(({ theme }) => ({
@@ -43,6 +44,8 @@ export const RightContainer = styled(Box)(({ theme }) => ({
     width: '100%',
     padding: '1rem',
   },
+ 
+
 }));
 
 export const ImageContainer = styled(Box)(({ theme }) => ({
@@ -73,9 +76,7 @@ export const ButtonContainer = styled(Box)({
 
 export const LoginButton = styled(Button)({
   width: '80%',
-  '&:hover': {
-    backgroundColor: '#388e3c',
-  },
+
 });
 
 export const SSOButton = styled(Button)({

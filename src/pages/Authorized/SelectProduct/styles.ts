@@ -2,12 +2,23 @@ import { SxProps, Theme } from '@mui/system';
 
 export const containerStyle: SxProps<Theme> = {
   display: 'flex',
-  justifyContent: 'center',
+  justifyContent: 'space-around',
   alignItems: 'center',
   minHeight: '100vh',
   flexDirection: 'column',
   color: '#fff', // Texto branco
   padding: '20px',
+  
+};
+
+export const containerLogoStyle: SxProps<Theme> = {
+  display: 'flex',
+  
+  alignItems: 'center',
+ //background:'#fff',
+  color: '#fff', 
+  padding: '20px',
+  width:'100%'
 };
 
 export const headingStyle: SxProps<Theme> = {
@@ -19,7 +30,7 @@ export const headingStyle: SxProps<Theme> = {
 
 export const cardStyle: SxProps<Theme> = {
   width: '100%',
-  maxWidth: '250px',
+  maxWidth: '200px',
   aspectRatio: '1 / 1', // Para manter a proporção quadrada
   backgroundColor: '#f5f5f5', // Fundo do card
   color: '#fff', // Texto do card
@@ -31,7 +42,7 @@ export const cardStyle: SxProps<Theme> = {
     transform: 'scale(1.05)', // Efeito de zoom ao passar o mouse
   },
   '@media (max-width: 600px)': {
-    maxWidth: '150px',
+    maxWidth: '130px',
   },
 };
 

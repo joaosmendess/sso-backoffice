@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Grid, Typography, Card, CardActionArea, CardContent, Button } from '@mui/material';
-import { containerStyle, headingStyle, cardStyle, imageStyle, productNameStyle } from './styles';
+import { containerStyle, headingStyle, cardStyle, imageStyle, productNameStyle, containerLogoStyle } from './styles';
 import { useNavigate } from 'react-router-dom';
+import ofm from '../../../assets/logo-white.png';
 
 interface Product {
   name: string;
@@ -13,6 +14,7 @@ interface Product {
 const SelectProduct: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [userName, setUserName] = useState<string | null>(null);
+  const [name, setName] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,30 +26,34 @@ const SelectProduct: React.FC = () => {
         name: perm.application.name,
         description: perm.application.description,
         productionUrl: perm.application.productionUrl,
-        logo: perm.application.logo, // Ajuste o caminho para o logo conforme necessário
+        logo: perm.application.logo,
       }));
       setProducts(fetchedProducts);
-      setUserName(parsedData.name); // Assumindo que o nome do usuário está em customerData
+      setUserName(parsedData.userName); // Assumindo que o userName está em customerData
+      setName(parsedData.name); // Assumindo que o name está em customerData
     }
   }, []);
 
   const handleProductSelect = (product: Product) => {
     const token = localStorage.getItem('token');
-    if (token) {
-      window.location.href = `${product.productionUrl}/callback?token=${token}`;
+    if (token && userName && name) {
+      window.location.href = `${product.productionUrl}/callback?token=${token}&name=${encodeURIComponent(name)}&userName=${encodeURIComponent(userName)}`;
     }
   };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('customerData');
-    navigate('/');
+    navigate('/login/:companyName');
   };
 
   return (
     <Box sx={containerStyle}>
+      <Box sx={containerLogoStyle}>
+        <img src={ofm} alt="ofm logo" style={{ height: '40px' }} />
+      </Box>
       <Typography variant="h4" gutterBottom sx={headingStyle}>
-        {`Seja bem-vindo(a)${userName ? `, ${userName}` : ''}!`}
+        {`Seja bem-vindo(a)${name ? `, ${name}` : ''}!`}
         <br />
         Selecione qual produto você deseja acessar.
       </Typography>
