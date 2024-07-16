@@ -5,8 +5,10 @@ import VerifySSO from './components/VerifySSO';
 import Register from './pages/Register';
 import SelectProduct from './pages/Authorized/SelectProduct';
 import Callback from './pages/Callback';
+import ForgotPassword from './pages/ForgotPassword';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
+import NotFound from './components/NotFound';
 import globalStyles from './globalStyles';
 
 const App: React.FC = () => {
@@ -26,14 +28,16 @@ const App: React.FC = () => {
         <Route path="/verify-sso/:companyName" element={<VerifySSO />} />
         <Route path="/register/:companyName" element={<Register />} />
         <Route path="/callback/:companyName" element={<Callback />} />
+        <Route path="/forgot-password/:companyName" element={<ForgotPassword />} />
         <Route
-          path="/select-product/:companyName"
+          path="/select-product"
           element={
             <ProtectedRoute>
               <SelectProduct />
             </ProtectedRoute>
           }
         />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );

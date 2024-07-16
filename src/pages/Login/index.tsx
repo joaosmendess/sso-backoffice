@@ -43,7 +43,7 @@ const Login: React.FC = () => {
       if (response && response.token) {
         localStorage.setItem('token', response.token);
         localStorage.setItem('customerData', JSON.stringify(response.customerData));
-        navigate(`/select-product/${companyName}`);
+        navigate('/select-product');
       } else {
         setError('Falha no login. Verifique suas credenciais.');
       }

@@ -4,6 +4,6 @@
       "lib": ["dom", "es2015"],
       "types": ["cypress"]
     },
-    "include": ["**/*.ts"]
+    "include": ["**/*.ts", "support/index.js"]
   }
   

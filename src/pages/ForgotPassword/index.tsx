@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { 
   LinearProgress, 
   Alert, 
@@ -31,6 +31,7 @@ const ForgotPassword: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { companyName } = useParams<{ companyName: string }>();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
@@ -91,7 +92,7 @@ const ForgotPassword: React.FC = () => {
           </HeaderContainer>
           <Form onSubmit={handleSubmit}>
             <InputField
-              id="email"
+              id="emailInput"
               label="Email"
               variant="outlined"
               type="email"
@@ -121,7 +122,7 @@ const ForgotPassword: React.FC = () => {
               <Typography variant="body2" color="textSecondary" align="center" sx={{ marginY: 0 }}>
                 Lembrou sua senha?
               </Typography>
-              <Button variant='text' color='primary' onClick={() => navigate('/')}>
+              <Button variant='text' color='primary' onClick={() => navigate(`/login/${companyName}`)}>
                 Entrar
               </Button>
             </ButtonContainer>

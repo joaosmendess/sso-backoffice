@@ -19,8 +19,12 @@ const SelectProduct: React.FC = () => {
 
   useEffect(() => {
     const customerData = localStorage.getItem('customerData');
+    console.log('Customer Data:', customerData); // Log adicionado
+
     if (customerData) {
       const parsedData = JSON.parse(customerData);
+      console.log('Parsed Data:', parsedData); // Log adicionado
+
       const permissions = parsedData.permissions;
       const fetchedProducts = permissions.map((perm: any) => ({
         name: perm.application.name,
@@ -28,6 +32,9 @@ const SelectProduct: React.FC = () => {
         productionUrl: perm.application.productionUrl,
         logo: perm.application.logo,
       }));
+
+      console.log('Fetched Products:', fetchedProducts); // Log adicionado
+
       setProducts(fetchedProducts);
       setUserName(parsedData.userName); // Assumindo que o userName está em customerData
       setName(parsedData.name); // Assumindo que o name está em customerData
@@ -44,7 +51,7 @@ const SelectProduct: React.FC = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('customerData');
-    navigate('/login/:companyName');
+    navigate('/login/ofm');
   };
 
   return (
@@ -63,7 +70,7 @@ const SelectProduct: React.FC = () => {
             <Box sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignContent: 'center' }}>
               <Card sx={cardStyle}>
                 <CardActionArea onClick={() => handleProductSelect(product)}>
-                  <CardContent sx={{ padding: 0 }}> {/* Remove padding to make the image occupy the entire card */}
+                  <CardContent sx={{ padding: 0 }}>
                     <img src={product.logo} alt={product.name} style={imageStyle as React.CSSProperties} />
                   </CardContent>
                 </CardActionArea>
@@ -74,7 +81,7 @@ const SelectProduct: React.FC = () => {
             </Box>
           </Grid>
         ))}
-      </Grid> <br />
+      </Grid>
       <Button onClick={handleLogout} variant="contained" color="error" sx={{ marginBottom: 4 }}>
         Sair
       </Button>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
-import { getPublicCompany } from '../../services/auth'; // Ajuste o caminho conforme necessário
+import { getPublicCompany } from '../../services/auth';
 
 interface PublicRouteProps {
   children: JSX.Element;
@@ -25,14 +25,18 @@ const PublicRoute: React.FC<PublicRouteProps> = ({ children }) => {
       }
     };
 
-    fetchCompany();
+    if (companyName) {
+      fetchCompany();
+    } else {
+      setIsLoading(false);
+    }
   }, [companyName]);
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  return isValidCompany ? (token ? <Navigate to={`/select-product/${companyName}`} /> : children) : <Navigate to="/" />;
+  return isValidCompany ? (token ? <Navigate to="/select-product" /> : children) : <Navigate to="/" />;
 };
 
 export default PublicRoute;

@@ -61,18 +61,18 @@ const CallbackPage = () => {
             localStorage.setItem('customerData', JSON.stringify(data.customerData));
 
             console.log('Token validado e armazenado:', data.token);
-            window.location.href = '/select-product';
+            window.location.href = '/select-product/:companyName';
           } else {
             console.error('Token ou customerData não retornado na resposta:', data);
             navigate('/', { replace: true });
           }
         } else {
           console.error('Erro HTTP ao validar token:', response.status);
-          navigate('/', { replace: true });
+          navigate('/login/:companyName', { replace: true });
         }
       } catch (error) {
         console.error('Erro ao validar token:', error);
-        navigate('/', { replace: true });
+        navigate('/login:companyName', { replace: true });
       }
     };
 
@@ -90,10 +90,10 @@ const CallbackPage = () => {
           localStorage.setItem('token', token);
           localStorage.setItem('customerData', JSON.stringify({ name, userName }));
 
-          window.location.href = '/select-product';
+          window.location.href = '/select-product/:companyName';
         } else {
           console.error('Dados necessários não encontrados no token decodificado');
-          navigate('/login', { replace: true });
+          navigate('/login/:companyName', { replace: true });
         }
       }
     } else {

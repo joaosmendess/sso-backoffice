@@ -52,6 +52,7 @@ export interface LoginResponse {
     name: string;
     userName: string;
     empresa: string;
+    empresa_id:number;
     permissions: Array<{
       application: {
         name: string;
@@ -112,6 +113,7 @@ export interface Application {
 }
 
 export interface Company {
+  tag:string;
   id: number;
   name: string;
   cnpj: string;
