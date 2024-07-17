@@ -98,6 +98,7 @@ const VerifySSO: React.FC = () => {
       <Form>
         <InputField
           label="Usuário"
+          id='username'
           variant="outlined"
           type="text"
           value={username}

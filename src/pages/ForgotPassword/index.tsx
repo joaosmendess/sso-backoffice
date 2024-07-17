@@ -92,8 +92,8 @@ const ForgotPassword: React.FC = () => {
           </HeaderContainer>
           <Form onSubmit={handleSubmit}>
             <InputField
-              id="emailInput"
               label="Email"
+              id="input-email"
               variant="outlined"
               type="email"
               value={email}
@@ -111,8 +111,8 @@ const ForgotPassword: React.FC = () => {
             )}
             <ButtonContainer>
               <Button
-                id="resetButton"
                 type="submit"
+                id="button-reset-password"
                 variant="contained"
                 color="primary"
                 disabled={!email || loading}

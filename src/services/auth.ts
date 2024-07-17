@@ -58,6 +58,15 @@ export const login = async (
   return response.data;
 };
 
+export const logout = async (token: string) => {
+  const response = await api.post('/auth/logout', {}, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  return response.data;
+};
+
 /**
  * Obtém os dados do usuário.
  * @param {string} username- Nome de usuário.

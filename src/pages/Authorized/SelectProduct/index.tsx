@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Grid, Typography, Card, CardActionArea, CardContent, Button } from '@mui/material';
 import { containerStyle, headingStyle, cardStyle, imageStyle, productNameStyle, containerLogoStyle } from './styles';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ofm from '../../../assets/logo-white.png';
+import { logout } from '../../../services/authService';
+import { getPublicCompany } from '../../../services/companyService';
 
 interface Product {
   name: string;
@@ -15,15 +17,26 @@ const SelectProduct: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [userName, setUserName] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
+  const [companyTag, setCompanyTag] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { companyName } = useParams<{ companyName: string }>();
 
   useEffect(() => {
+    const fetchCompanyData = async () => {
+      try {
+        const company = await getPublicCompany(companyName || '');
+        setCompanyTag(company.tag);
+      } catch (error) {
+        console.error('Error fetching company:', error);
+      }
+    };
+
     const customerData = localStorage.getItem('customerData');
-    console.log('Customer Data:', customerData); // Log adicionado
+    console.log('Customer Data:', customerData);
 
     if (customerData) {
       const parsedData = JSON.parse(customerData);
-      console.log('Parsed Data:', parsedData); // Log adicionado
+      console.log('Parsed Data:', parsedData);
 
       const permissions = parsedData.permissions;
       const fetchedProducts = permissions.map((perm: any) => ({
@@ -33,13 +46,16 @@ const SelectProduct: React.FC = () => {
         logo: perm.application.logo,
       }));
 
-      console.log('Fetched Products:', fetchedProducts); // Log adicionado
+      console.log('Fetched Products:', fetchedProducts);
 
       setProducts(fetchedProducts);
-      setUserName(parsedData.userName); // Assumindo que o userName está em customerData
-      setName(parsedData.name); // Assumindo que o name está em customerData
+      setUserName(parsedData.username);
+      setName(parsedData.name);
+      setCompanyTag(parsedData.tagCompany);
+
+      fetchCompanyData();
     }
-  }, []);
+  }, [companyName]);
 
   const handleProductSelect = (product: Product) => {
     const token = localStorage.getItem('token');
@@ -48,10 +64,18 @@ const SelectProduct: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        await logout(token);
+      } catch (error) {
+        console.error('Error during logout:', error);
+      }
+    }
     localStorage.removeItem('token');
     localStorage.removeItem('customerData');
-    navigate('/login/ofm');
+    navigate(`/login/${companyTag}`);
   };
 
   return (

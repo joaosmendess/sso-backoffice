@@ -1,17 +1,24 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
-import { LinearProgress, Alert, useMediaQuery, useTheme, Box, IconButton, InputAdornment, Typography, Button } from '@mui/material';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { 
+  LinearProgress, 
+  Alert, 
+  useMediaQuery, 
+  useTheme, 
+  Box, 
+  Typography, 
+  Button, 
+  IconButton, 
+  InputAdornment 
+} from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { register, getPublicCompany } from '../../services/auth';
-import LoginHeader from '../../components/LoginHeader';
 
-import animated from '../../assets/olShi6AW2pQj75e9EX (1).mp4';
+import animated from '../../assets/41q1lZI600kL6G91Wb.mp4';
 
 import {
   FormContainer,
   HeaderContainer,
   ButtonContainer,
-  LoginButton,
   InputField,
   Form,
   ImageContainer,
@@ -20,60 +27,49 @@ import {
   Divider,
 } from './styles';
 
-const Register: React.FC = () => {
-  const [name, setName] = useState('');
-  const [userName, setUserName] = useState('');
-  const [invitationEmail, setInvitationEmail] = useState('');
+const SetNewPassword: React.FC = () => {
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [companyId, setCompanyId] = useState<string | null>(null);
 
   const navigate = useNavigate();
-  const { companyName } = useParams<{ companyName: string }>();
+  
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
-  useEffect(() => {
-    if (companyName) {
-      getPublicCompany(companyName)
-        .then(response => {
-          setCompanyId(response.id);
-        })
-        .catch(error => {
-          console.error('Error fetching company:', error);
-          setError('Erro ao buscar dados da empresa.');
-        });
-    }
-  }, [companyName]);
-
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!companyId) {
-      setError('ID da empresa não encontrado.');
-      return;
-    }
     setLoading(true);
     setError(null);
 
+    if (password !== confirmPassword) {
+      setError('As senhas não coincidem.');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await register(name, userName, invitationEmail, password, companyId);
-      if (response) {
-        navigate(`/login/${companyName}`);
-      } else {
-        setError('Falha no registro. Verifique suas informações.');
-      }
+      // Lógica para enviar a nova senha usando o token
+      setSubmitted(true);
+      setError(null);
     } catch (err) {
-      setError('Falha no registro. Verifique suas informações.');
+      setError('Falha ao redefinir a senha. Verifique suas informações.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleClickShowPassword = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
+    setShowPassword((prev) => !prev);
+  };
+
+  const handleClickShowConfirmPassword = () => {
+    setShowConfirmPassword((prev) => !prev);
   };
 
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -116,41 +112,13 @@ const Register: React.FC = () => {
 
         <RightContainer>
           <HeaderContainer>
-            <LoginHeader />
+            <Typography variant="h5" component="h1" gutterBottom color='InfoText'>
+              Escolha sua nova senha
+            </Typography>
           </HeaderContainer>
-          <Form onSubmit={handleRegister}>
+          <Form onSubmit={handleSubmit}>
             <InputField
-              label="Nome"
-              id="input-name"
-              variant="outlined"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              margin="normal"
-            />
-            <InputField
-              label="Usuário"
-              id="input-username"
-              variant="outlined"
-              type="text"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              required
-              margin="normal"
-            />
-            <InputField
-              label="Email"
-              id="input-email"
-              variant="outlined"
-              type="email"
-              value={invitationEmail}
-              onChange={(e) => setInvitationEmail(e.target.value)}
-              required
-              margin="normal"
-            />
-            <InputField
-              label="Senha"
+              label="Nova Senha"
               id="input-password"
               variant="outlined"
               type={showPassword ? 'text' : 'password'}
@@ -173,25 +141,52 @@ const Register: React.FC = () => {
                 ),
               }}
             />
+            <InputField
+              label="Confirmar Nova Senha"
+              id="input-password-confirmation"
+              variant="outlined"
+              type={showConfirmPassword ? 'text' : 'password'}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              margin="normal"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle confirm password visibility"
+                      onClick={handleClickShowConfirmPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
             {error && (
               <Alert severity="error" sx={{ marginBottom: '1rem', opacity: error ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>
                 {error}
               </Alert>
             )}
+            {submitted && (
+              <Alert severity="success">Senha redefinida com sucesso. Você pode agora fazer login com sua nova senha.</Alert>
+            )}
             <ButtonContainer>
-              <LoginButton
+              <Button
                 type="submit"
-                id="button-register"
+                id="button-set-new-password"
                 variant="contained"
                 color="primary"
-                disabled={!name || !userName || !invitationEmail || !password || loading}
+                disabled={!password || !confirmPassword || loading}
               >
-                Registrar-se
-              </LoginButton>
-              <Typography variant="body2" color="textSecondary" align="center" sx={{ marginY: 0.5 }}>
-                Já tem uma conta?
+                Redefinir Senha
+              </Button>
+              <Typography variant="body2" color="textSecondary" align="center" sx={{ marginY: 0 }}>
+                Lembrou sua senha?
               </Typography>
-              <Button variant='text' color='primary' onClick={() => navigate(`/login/${companyName}`)}>
+              <Button variant='text' color='primary' onClick={() => navigate(`/login`)}>
                 Entrar
               </Button>
             </ButtonContainer>
@@ -202,4 +197,4 @@ const Register: React.FC = () => {
   );
 };
 
-export default Register;
+export default SetNewPassword;

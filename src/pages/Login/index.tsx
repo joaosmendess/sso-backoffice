@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { LinearProgress, Alert, useMediaQuery, useTheme, Box, IconButton, InputAdornment, Typography, Button, Link } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { login } from '../../services/auth';
+import { login } from '../../services/authService';  // Importando do authService
 import LoginHeader from '../../components/LoginHeader';
 import logo from '../../assets/key.png';
 import animated from '../../assets/olShi6AW2pQj75e9EX (1).mp4';
@@ -19,13 +19,7 @@ import {
   RightContainer,
   Divider,
 } from './styles';
-
-interface HttpError extends Error {
-  response?: {
-    status: number;
-    data: unknown;
-  };
-}
+import { handleApiError } from '../../Utils/errorHandler'; 
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -58,22 +52,7 @@ const Login: React.FC = () => {
         setError('Falha no login. Verifique suas credenciais.');
       }
     } catch (err) {
-      const httpError = err as HttpError;
-      if (httpError.response) {
-        if (httpError.response.status === 400) {
-          setError('Usuário não encontrado.');
-        } else if (httpError.response.status === 401) {
-          setError('Credenciais inválidas. Por favor, tente novamente.');
-        } else if (httpError.response.status === 404) {
-          setError('Empresa não encontrada.');
-        } else if (httpError.response.status === 500) {
-          setError('Erro interno do servidor. Por favor, tente novamente mais tarde.');
-        } else {
-          setError('Ocorreu um erro inesperado. Tente novamente mais tarde.');
-        }
-      } else {
-        setError('Ocorreu um erro inesperado. Tente novamente mais tarde.');
-      }
+      setError(handleApiError(err));
     } finally {
       setLoading(false);
     }
@@ -139,8 +118,8 @@ const Login: React.FC = () => {
           </HeaderContainer>
           <Form onSubmit={handleLogin}>
             <InputField
-              id="userNameInput"
               label="Usuário"
+              id="input-username"
               variant="outlined"
               type="text"
               value={username}
@@ -149,8 +128,8 @@ const Login: React.FC = () => {
               margin="normal"
             />
             <InputField
-              id="passwordInput"
               label="Senha"
+              id="input-password"
               variant="outlined"
               type={showPassword ? 'text' : 'password'}
               value={password}
@@ -184,8 +163,8 @@ const Login: React.FC = () => {
             )}
             <ButtonContainer>
               <LoginButton
-                id="loginButton"
                 type="submit"
+                id="button-login"
                 variant="contained"
                 color="primary"
                 disabled={!username || !password || loading}

@@ -10,6 +10,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import NotFound from './components/NotFound';
 import globalStyles from './globalStyles';
+import SetNewPassword from './pages/SetNewPassword';
 
 const App: React.FC = () => {
   globalStyles();
@@ -29,6 +30,7 @@ const App: React.FC = () => {
         <Route path="/register/:companyName" element={<Register />} />
         <Route path="/callback/:companyName" element={<Callback />} />
         <Route path="/forgot-password/:companyName" element={<ForgotPassword />} />
+        <Route path="/set-new-password/" element={<SetNewPassword />} />
         <Route
           path="/select-product"
           element={
