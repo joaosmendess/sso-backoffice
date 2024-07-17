@@ -45,7 +45,7 @@ const CallbackPage = () => {
      */
     const handleTokenValidation = async (token: string) => {
       try {
-        const response = await fetch('http://localhost:8989/api/auth/validate-jwt', {
+        const response = await fetch('http://10.1.151:8000/api/auth/validate-jwt', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ const CallbackPage = () => {
             localStorage.setItem('customerData', JSON.stringify(data.customerData));
 
             console.log('Token validado e armazenado:', data.token);
-            window.location.href = '/select-product/:companyName';
+            window.location.href = '/select-product/';
           } else {
             console.error('Token ou customerData não retornado na resposta:', data);
             navigate('/', { replace: true });
@@ -83,14 +83,14 @@ const CallbackPage = () => {
         const decodedToken = decodeToken(token);
         console.log('Decoded token:', decodedToken); // Log para depuração
 
-        if (decodedToken && decodedToken.name && decodedToken.userName) {
-          const { name, userName } = decodedToken;
+        if (decodedToken && decodedToken.name && decodedToken.username) {
+          const { name, username } = decodedToken;
 
           console.log('Token já validado, redirecionando para /select-product');
           localStorage.setItem('token', token);
-          localStorage.setItem('customerData', JSON.stringify({ name, userName }));
+          localStorage.setItem('customerData', JSON.stringify({ name, username }));
 
-          window.location.href = '/select-product/:companyName';
+          window.location.href = '/select-product/';
         } else {
           console.error('Dados necessários não encontrados no token decodificado');
           navigate('/login/:companyName', { replace: true });

@@ -1,14 +1,13 @@
-// VerifySSO.tsx
-
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Typography, LinearProgress, Alert, Button } from '@mui/material';
 import { validateToken, getUser } from '../../services/auth';
 import LoginHeader from '../../components/LoginHeader';
 import { FormContainer, HeaderContainer, ButtonContainer, InputField, Form } from './styles';
+import { GetUserResponse } from '../../types'; // Certifique-se de importar a interface corretamente
 
 const VerifySSO: React.FC = () => {
-  const [userName, setUserName] = useState('');
+  const [username, setUsername] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -18,7 +17,7 @@ const VerifySSO: React.FC = () => {
 
   useEffect(() => {
     const handleMessage = async (event: MessageEvent) => {
-      if (event.origin !== 'http://localhost:8989') return;
+      if (event.origin !== 'http://10.1.1.151:8000') return;
 
       const { token, customerData } = event.data;
       console.log('Received token and customerData:', token, customerData);
@@ -51,7 +50,7 @@ const VerifySSO: React.FC = () => {
   }, [redirectTo]);
 
   const handleUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserName(e.target.value);
+    setUsername(e.target.value);
     setError(null);
   };
 
@@ -60,10 +59,15 @@ const VerifySSO: React.FC = () => {
     setError(null);
 
     try {
-      const user = await getUser(userName);
-      if (user) {
-        if (user.empresa.sso_name) {
-          const ssoUrl = `http://localhost:8989/auth/redirect?redirect_to=${encodeURIComponent(window.location.origin + redirectTo)}`;
+      const response: GetUserResponse = await getUser(username);
+      console.log('API response:', response); // Adicionando log para depuração
+
+      if (response.message === 'Usuário e empresa encontrados') {
+        const { company } = response;
+        console.log('Company:', company); // Adicionando log para depuração
+
+        if (company && company.ssoName) {
+          const ssoUrl = `http://10.1.1.151:8000/auth/redirect?clientId=${company.clientId}&clientSecret=${company.clientSecret}&tenantId=${company.tenantId}&redirectUrl=${encodeURIComponent(company.redirectUrl)}`;
           window.location.href = ssoUrl;
         } else {
           setError('O usuário não tem permissão de entrar com esse SSO. Volte para a tela anterior e faça login com usuário e senha.');
@@ -72,6 +76,7 @@ const VerifySSO: React.FC = () => {
         setError('Usuário não encontrado. Verifique suas credenciais.');
       }
     } catch (err) {
+      console.error('Error verifying user:', err); // Adicionando log de erro
       setError('Falha ao verificar o usuário. Tente novamente.');
     } finally {
       setLoading(false);
@@ -95,7 +100,7 @@ const VerifySSO: React.FC = () => {
           label="Usuário"
           variant="outlined"
           type="text"
-          value={userName}
+          value={username}
           onChange={handleUserNameChange}
           required
           margin="normal"
@@ -110,7 +115,7 @@ const VerifySSO: React.FC = () => {
             variant="contained"
             color="primary"
             onClick={handleVerifyUser}
-            disabled={!userName || loading}
+            disabled={!username || loading}
           >
             Verificar Usuário
           </Button>

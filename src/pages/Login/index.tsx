@@ -20,12 +20,20 @@ import {
   Divider,
 } from './styles';
 
+interface HttpError extends Error {
+  response?: {
+    status: number;
+    data: unknown;
+  };
+}
+
 const Login: React.FC = () => {
-  const [userName, setUserName] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const { companyName } = useParams<{ companyName: string }>();
@@ -37,18 +45,35 @@ const Login: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setSuccessMessage(null);
 
     try {
-      const response = await login(userName, password);
+      const response = await login(username, password, companyName || '');
       if (response && response.token) {
         localStorage.setItem('token', response.token);
         localStorage.setItem('customerData', JSON.stringify(response.customerData));
-        navigate('/select-product');
+        setSuccessMessage('Login bem-sucedido! Redirecionando...');
+        setTimeout(() => navigate('/select-product'), 2000);
       } else {
         setError('Falha no login. Verifique suas credenciais.');
       }
     } catch (err) {
-      setError('Falha no login. Verifique suas credenciais.');
+      const httpError = err as HttpError;
+      if (httpError.response) {
+        if (httpError.response.status === 400) {
+          setError('Usuário não encontrado.');
+        } else if (httpError.response.status === 401) {
+          setError('Credenciais inválidas. Por favor, tente novamente.');
+        } else if (httpError.response.status === 404) {
+          setError('Empresa não encontrada.');
+        } else if (httpError.response.status === 500) {
+          setError('Erro interno do servidor. Por favor, tente novamente mais tarde.');
+        } else {
+          setError('Ocorreu um erro inesperado. Tente novamente mais tarde.');
+        }
+      } else {
+        setError('Ocorreu um erro inesperado. Tente novamente mais tarde.');
+      }
     } finally {
       setLoading(false);
     }
@@ -118,8 +143,8 @@ const Login: React.FC = () => {
               label="Usuário"
               variant="outlined"
               type="text"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
               margin="normal"
             />
@@ -152,13 +177,18 @@ const Login: React.FC = () => {
                 {error}
               </Alert>
             )}
+            {successMessage && (
+              <Alert severity="success" sx={{ marginBottom: '1rem', opacity: successMessage ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>
+                {successMessage}
+              </Alert>
+            )}
             <ButtonContainer>
               <LoginButton
                 id="loginButton"
                 type="submit"
                 variant="contained"
                 color="primary"
-                disabled={!userName || !password || loading}
+                disabled={!username || !password || loading}
               >
                 Entrar
               </LoginButton>

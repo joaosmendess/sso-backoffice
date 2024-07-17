@@ -16,7 +16,7 @@ export interface User {
   name: string;
   user: {
     name: string;
-    userName: string;
+    username: string;
     status: string;
   };
   status: string;
@@ -33,16 +33,18 @@ export interface Module {
 }
 
 export interface GetUserResponse {
-  userName: string;
+  message:string;
+  username: string;
   name: string;
 
-  empresa: {
+  company: {
     name: string;
     cnpj: string;
-    sso_name: string;
-    client_id: string;
-    client_secret: string;
-    tenant_id: string;
+    ssoName: string;
+    clientId: string;
+    clientSecret: string;
+    tenantId: string;
+    redirectUrl:string;
   };
 }
 
@@ -50,9 +52,9 @@ export interface LoginResponse {
   token: string;
   customerData: {
     name: string;
-    userName: string;
-    empresa: string;
-    empresa_id:number;
+    username: string;
+    company: string;
+    company_id:number;
     permissions: Array<{
       application: {
         name: string;
@@ -109,7 +111,7 @@ export interface Application {
   developUrl: string;
   homologUrl: string;
   productionUrl: string;
-  empresa_id: number;
+  company_id: number;
 }
 
 export interface Company {
@@ -117,7 +119,7 @@ export interface Company {
   id: number;
   name: string;
   cnpj: string;
-  sso_name: string | null;
+  ssoName: string | null;
   client_id: string | null;
   client_secret: string | null;
   tenant_id: string | null;

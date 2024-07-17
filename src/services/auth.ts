@@ -41,28 +41,30 @@ api.interceptors.response.use(
 
 /**
  * Realiza o login do usuário.
- * @param {string} userName - Nome de usuário.
+ * @param {string} username- Nome de usuário.
  * @param {string} password - Senha do usuário.
  * @returns {Promise<LoginResponse>} - Resposta da API com o token e dados do cliente.
  */
 export const login = async (
-  userName: string,
-  password: string
+  username: string,
+  password: string,
+  tag: string,
 ): Promise<LoginResponse> => {
   const response = await api.post<LoginResponse>("/auth/login", {
-    userName,
+    username,
     password,
+    tag,
   });
   return response.data;
 };
 
 /**
  * Obtém os dados do usuário.
- * @param {string} userName - Nome de usuário.
+ * @param {string} username- Nome de usuário.
  * @returns {Promise<GetUserResponse>} - Dados do usuário.
  */
-export const getUser = async (userName: string): Promise<GetUserResponse> => {
-  const response = await api.get<GetUserResponse>(`/check-user/${userName}`);
+export const getUser = async (username: string): Promise<GetUserResponse> => {
+  const response = await api.get<GetUserResponse>(`/check-user/${username}`);
   console.log(response);
   return response.data;
 };
@@ -70,7 +72,7 @@ export const getUser = async (userName: string): Promise<GetUserResponse> => {
 /**
  * Cria um novo usuário.
  * @param {string} name - Nome do usuário.
- * @param {string} userName - Nome de usuário.
+ * @param {string} username- Nome de usuário.
  * @param {string} permissionGroup - Grupo de permissões do usuário.
  * @returns {Promise<any>} - Resposta da API.
  */
@@ -95,10 +97,10 @@ export const createUser = async (
  */
 export const fetchUsers = async (
   name?: string,
-  userName?: string
+  username?: string
 ): Promise<User[]> => {
   const response = await api.get("/users", {
-    params: { name, userName },
+    params: { name, username },
   });
   return response.data;
 };
@@ -106,7 +108,7 @@ export const fetchUsers = async (
 /**
  * Registra um novo usuário.
  * @param {string} name - Nome do usuário.
- * @param {string} userName - Nome de usuário.
+ * @param {string} username- Nome de usuário.
  * @param {string} invitationEmail - Email de convite.
  * @param {string} password - Senha do usuário.
  * @returns {Promise<any>} - Resposta da API.
@@ -124,7 +126,7 @@ export const register = async (
       userName,
       invitationEmail,
       password,
-      empresa_id: companyId, // Captura o ID da empresa obtido na resposta da API
+      company_id: companyId, // Captura o ID da company obtido na resposta da API
     });
     return response.data;
   } catch (error) {
@@ -231,11 +233,11 @@ export const deletePermissionGroup = async (id: string) => {
 /**
  * Cria um novo módulo.
  * @param {string} name - Nome do módulo.
- * @param {number} empresa_id - ID da empresa.
+ * @param {number} company_id - ID da company.
  * @returns {Promise<any>} - Resposta da API.
  */
-export const createModule = async (name: string, empresa_id: number) => {
-  const response = await api.post("/modules", { name, empresa_id });
+export const createModule = async (name: string, company_id: number) => {
+  const response = await api.post("/modules", { name, company_id });
   return response.data;
 };
 
@@ -243,15 +245,15 @@ export const createModule = async (name: string, empresa_id: number) => {
  * Atualiza um módulo.
  * @param {string} id - ID do módulo.
  * @param {string} name - Nome do módulo.
- * @param {number} empresa_id - ID da empresa.
+ * @param {number} company_id - ID da company.
  * @returns {Promise<any>} - Resposta da API.
  */
 export const updateModule = async (
   id: string,
   name: string,
-  empresa_id: number
+  company_id: number
 ) => {
-  const response = await api.put(`/modules/${id}`, { name, empresa_id });
+  const response = await api.put(`/modules/${id}`, { name, company_id });
   return response.data;
 };
 
