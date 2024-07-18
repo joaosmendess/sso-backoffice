@@ -64,7 +64,7 @@ const SelectProduct: React.FC = () => {
     }
   };
 
-  const handleLogout = async () => {
+  const handleLogout = async () => {      
     const token = localStorage.getItem('token');
     if (token) {
       try {
