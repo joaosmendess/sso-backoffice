@@ -169,22 +169,29 @@ const Login: React.FC = () => {
                 color="primary"
                 disabled={!username || !password || loading}
               >
-                Entrar
+                entrar
               </LoginButton>
-
+ 
               <SSOButton
                 variant="contained"
                 color="primary"
                 startIcon={<img src={logo} alt="SSO Logo" style={{ height: 30, marginLeft: 10 }} />}
                 onClick={handleSSOPageNavigation}
+                
               >
-                entrar com SSO externo
+               
+              <Typography variant='body2'>
+
+              entrar com SSO externo
+              </Typography>
               </SSOButton>
               <Typography variant="body2" color="textSecondary" align="center" sx={{ marginY: 0}}>
                 Ainda não possui conta?
               </Typography>
-              <Button variant='text' color='primary' onClick={handleRegisterNavigation}>
-                Registrar-se
+              <Button variant='text' color='primary' onClick={handleRegisterNavigation} sx={{textTransform:'none'}}>
+              <Typography variant='body2' >
+                 Registrar-se
+              </Typography>
               </Button>
             </ButtonContainer>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>

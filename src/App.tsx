@@ -28,7 +28,7 @@ const App: React.FC = () => {
         />
         <Route path="/verify-sso/:companyName" element={<VerifySSO />} />
         <Route path="/register/:companyName" element={<Register />} />
-        <Route path="/callback/:companyName" element={<Callback />} />
+        <Route path="/callback" element={<Callback />} />
         <Route path="/forgot-password/:companyName" element={<ForgotPassword />} />
         <Route path="/set-new-password/" element={<SetNewPassword />} />
         <Route

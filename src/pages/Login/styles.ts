@@ -72,16 +72,18 @@ export const ButtonContainer = styled(Box)({
 });
 
 export const LoginButton = styled(Button)({
-  width: '80%',
+  width: '70%',
+  textTransform:'capitalize'
 
 });
 
-export const SSOButton = styled(Button)({
-  marginLeft:'5px',
-  
-  borderRadius:'45px',
-  
-});
+export const SSOButton = styled(Button)(({ theme }) => ({
+textTransform:'capitalize',
+  [theme.breakpoints.down('md')]: {
+    width: '70%',
+    
+  },
+}));
 
 export const InputField = styled(TextField)({
   width: '80%',

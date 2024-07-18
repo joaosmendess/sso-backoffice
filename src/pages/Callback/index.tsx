@@ -3,12 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 const tokenThresholdLength = 1245; // Defina o valor apropriado para o comprimento do token
 
-/**
- * Componente de Callback para lidar com a resposta do SSO.
- * 
- * @component
- * @returns {null} Este componente não precisa renderizar nada.
- */
 const CallbackPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -18,13 +12,7 @@ const CallbackPage = () => {
     const token = urlParams.get('token');
     console.log('Captured token:', token); // Log para depuração
 
-    /**
-     * Decodifica um token JWT.
-     * 
-     * @param {string} token - O token JWT a ser decodificado.
-     * @returns {Object|null} O payload decodificado do token ou null em caso de erro.
-     */
-    const decodeToken = (token: string) => {
+    const decodeToken = (token:string) => {
       try {
         const base64Url = token.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -38,13 +26,9 @@ const CallbackPage = () => {
       }
     };
 
-    /**
-     * Valida o token JWT com o servidor.
-     * 
-     * @param {string} token - O token JWT a ser validado.
-     */
-    const handleTokenValidation = async (token: string) => {
+    const handleTokenValidation = async (token:string) => {
       try {
+        console.log('Validating token with server:', token);
         const response = await fetch('http://10.1.151:8000/api/auth/validate-jwt', {
           method: 'POST',
           headers: {
@@ -55,6 +39,7 @@ const CallbackPage = () => {
 
         if (response.ok) {
           const data = await response.json();
+          console.log('Server response data:', data);
 
           if (data && data.token && data.customerData) {
             localStorage.setItem('token', data.token);
@@ -78,8 +63,10 @@ const CallbackPage = () => {
 
     if (token) {
       if (token.length > tokenThresholdLength) {
+        console.log('Token length is above threshold, proceeding with server validation');
         handleTokenValidation(token);
       } else {
+        console.log('Token length is within threshold, decoding token locally');
         const decodedToken = decodeToken(token);
         console.log('Decoded token:', decodedToken); // Log para depuração
 
@@ -97,7 +84,8 @@ const CallbackPage = () => {
         }
       }
     } else {
-      console.log('oi');
+      console.log('Nenhum token encontrado na URL');
+      navigate('/login/:companyName', { replace: true });
     }
   }, [location.search, navigate]);
 
