@@ -67,7 +67,7 @@ const VerifySSO: React.FC = () => {
         console.log('Company:', company); // Adicionando log para depuração
 
         if (company && company.ssoName) {
-          const ssoUrl = `http://10.1.1.151:8000/auth/redirect?clientId=${company.clientId}&clientSecret=${company.clientSecret}&tenantId=${company.tenantId}&redirectUrl=${encodeURIComponent(company.redirectUrl)}`;
+          const ssoUrl = `http://10.1.1.151:8000/auth/redirect?clientId=${company.clientId}&clientSecret=${company.clientSecret}&tenantId=${company.tenantId}&redirectUrl=${encodeURIComponent(company.redirectUrl)}&redirectUri=${encodeURI(company.redirectUri)}`;
           window.location.href = ssoUrl;
         } else {
           setError('O usuário não tem permissão de entrar com esse SSO. Volte para a tela anterior e faça login com usuário e senha.');

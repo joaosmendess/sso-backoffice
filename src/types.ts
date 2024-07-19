@@ -78,7 +78,9 @@ export interface CompanyDetails {
   clientId: string;
   clientSecret: string;
   tenantId: string;
-  redirectUrl: string;
+  redirectUrl: string;  
+  redirectUri: string;
+
 }
 
 // Permission related types

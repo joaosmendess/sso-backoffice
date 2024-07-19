@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const tokenThresholdLength = 1245; // Defina o valor apropriado para o comprimento do token
+const tokenThresholdLength = 1245 // Defina o valor apropriado para o comprimento do token
 
 const CallbackPage = () => {
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ const CallbackPage = () => {
             localStorage.setItem('customerData', JSON.stringify(data.customerData));
 
             console.log('Token validado e armazenado:', data.token);
-            window.location.href = '/select-product/';
+            window.location.href = '/select-product';
           } else {
             console.error('Token ou customerData não retornado na resposta:', data);
             navigate('/', { replace: true });
@@ -77,7 +77,7 @@ const CallbackPage = () => {
           localStorage.setItem('token', token);
           localStorage.setItem('customerData', JSON.stringify({ name, username }));
 
-          window.location.href = '/select-product/';
+          window.location.href = '/select-product';
         } else {
           console.error('Dados necessários não encontrados no token decodificado');
           navigate('/login/:companyName', { replace: true });
