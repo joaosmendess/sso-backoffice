@@ -8,7 +8,7 @@ export interface UserCustomerData {
   name: string;
   username: string;
   company: string;
-  company_id: number;
+  companyId: number;
   tagCompany:string;
   permissions: UserPermission[];
 }
@@ -53,6 +53,7 @@ export interface UserInfo {
 export interface GetUserResponse {
   message: string;
   username: string;
+  tagCompany:string;
   name: string;
   company: CompanyDetails;
 }
@@ -64,9 +65,9 @@ export interface Company {
   name: string;
   cnpj: string;
   ssoName: string | null;
-  client_id: string | null;
+  clientd: string | null;
   client_secret: string | null;
-  tenant_id: string | null;
+  tenantId: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -91,8 +92,8 @@ export interface Permission {
   post: number;
   put: number;
   delete: number;
-  modules_id: number;
-  permissions_groups_id: number;
+  modulesId: number;
+  permissions_groupsId: number;
   created_at: string;
   updated_at: string;
 }
@@ -110,16 +111,16 @@ export interface PermissionGroupHasModule {
   post: number;
   put: number;
   delete: number;
-  modules_id: number;
-  permissions_groups_id: number;
+  modulesId: number;
+  permissions_groupsId: number;
   created_at: string;
   updated_at: string;
 }
 
 export interface UserHasPermission {
   id: number;
-  permissions_groups_id: number;
-  user_id: number;
+  permissions_groupsId: number;
+  userId: number;
   created_at: string;
   updated_at: string;
   user: User;
@@ -130,7 +131,7 @@ export interface UserHasPermission {
 export interface Module {
   id: number;
   name: string;
-  applications_id: number;
+  applicationsId: number;
   created_at: string;
   updated_at: string;
 }
@@ -143,5 +144,5 @@ export interface Application {
   developUrl: string;
   homologUrl: string;
   productionUrl: string;
-  company_id: number;
+  companyId: number;
 }

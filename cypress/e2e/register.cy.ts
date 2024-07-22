@@ -8,7 +8,7 @@ describe('Register Test', () => {
   
       // Entra com o nome, usuário, email e senha
       cy.get('#nameInput').type('Frontend user');
-      cy.get('#userNameInput').type('frontend@ofm.com.br');
+      cy.get('#usernameInput').type('frontend@ofm.com.br');
       cy.get('#emailInput').type('frontend@ofm.com.br');
       cy.get('#passwordInput').type('123456789');
   

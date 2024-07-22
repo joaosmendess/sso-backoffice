@@ -16,6 +16,12 @@ export const getUser = async (username: string): Promise<GetUserResponse> => {
   return response.data;
 };
 
+export const checkUser = async ( username: string, tagCompany:string ): Promise<GetUserResponse> => {
+  const response = await api.get<GetUserResponse>(`/check-user/${username}?tagCompany=${tagCompany}`);
+  console.log(response);
+  return response.data;
+};
+
 export const validateToken = async (token: string) => {
   const response = await api.post('/auth/validate-jwt', { token });
   return response.data;

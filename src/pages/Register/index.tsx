@@ -2,12 +2,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { LinearProgress, Alert, useMediaQuery, useTheme, Box, IconButton, InputAdornment, Typography, Button } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { register, getPublicCompany } from '../../services/auth';
+import { register } from '../../services/registerService';
+import { getPublicCompany } from '../../services/companyService';
 import LoginHeader from '../../components/LoginHeader';
 
 import animated from '../../assets/olShi6AW2pQj75e9EX (1).mp4';
 
-import {
+import { 
   FormContainer,
   HeaderContainer,
   ButtonContainer,
@@ -22,13 +23,14 @@ import {
 
 const Register: React.FC = () => {
   const [name, setName] = useState('');
-  const [userName, setUserName] = useState('');
+  const [username, setUserName] = useState('');
   const [invitationEmail, setInvitationEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [companyId, setCompanyId] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const { companyName } = useParams<{ companyName: string }>();
@@ -44,29 +46,47 @@ const Register: React.FC = () => {
         })
         .catch(error => {
           console.error('Error fetching company:', error);
-          setError('Erro ao buscar dados da empresa.');
+          navigate('/404');
         });
     }
-  }, [companyName]);
+  }, [companyName, navigate]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!companyId) {
-      setError('ID da empresa não encontrado.');
+      setError('Empresa não encontrada.');
       return;
     }
     setLoading(true);
     setError(null);
 
     try {
-      const response = await register(name, userName, invitationEmail, password, companyId);
+      const response = await register(name, username, invitationEmail, password, companyId);
       if (response) {
-        navigate(`/login/${companyName}`);
-      } else {
-        setError('Falha no registro. Verifique suas informações.');
+        setSuccessMessage('Registro bem-sucedido! Você receberá um e-mail para confirmação. Redirecionando para a página de login... ');
+        setTimeout(() => {
+          navigate(`/login/${companyName}`);
+        }, 3000); // Redireciona após 3 segundos
       }
-    } catch (err) {
-      setError('Falha no registro. Verifique suas informações.');
+    } catch (err:any ) {
+      let errorMessage = 'Não foi possível completar o registro. Verifique suas informações e tente novamente.';
+      if (err.response && err.response.data && err.response.data.message) {
+        // Mapear mensagens de erro específicas para mensagens amigáveis
+        switch (err.response.data.message) {
+          case 'User already exists':
+            errorMessage = 'Usuário já existe. Por favor, escolha outro nome de usuário.';
+            break;
+          case 'Invalid email':
+            errorMessage = 'E-mail inválido. Por favor, insira um e-mail válido.';
+            break;
+          case 'Password too weak':
+            errorMessage = 'Senha muito fraca. Por favor, escolha uma senha mais forte.';
+            break;
+          default:
+            errorMessage = 'Ocorreu um erro inesperado. Por favor, tente novamente.';
+        }
+      }
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -134,7 +154,7 @@ const Register: React.FC = () => {
               id="input-username"
               variant="outlined"
               type="text"
-              value={userName}
+              value={username}
               onChange={(e) => setUserName(e.target.value)}
               required
               margin="normal"
@@ -178,20 +198,26 @@ const Register: React.FC = () => {
                 {error}
               </Alert>
             )}
+            {successMessage && (
+              <Alert severity="success" sx={{ marginBottom: '1rem', opacity: successMessage ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>
+                {successMessage}
+              </Alert>
+            )}
             <ButtonContainer>
               <LoginButton
                 type="submit"
                 id="button-register"
                 variant="contained"
                 color="primary"
-                disabled={!name || !userName || !invitationEmail || !password || loading}
+                sx={{ textTransform: "none" }} 
+                disabled={!name || !username || !invitationEmail || !password || loading}
               >
                 Registrar-se
               </LoginButton>
               <Typography variant="body2" color="textSecondary" align="center" sx={{ marginY: 0.5 }}>
                 Já tem uma conta?
               </Typography>
-              <Button variant='text' color='primary' onClick={() => navigate(`/login/${companyName}`)}>
+              <Button variant='text' color='primary' sx={{ textTransform: "none" }} onClick={() => navigate(`/login/${companyName}`)}>
                 Entrar
               </Button>
             </ButtonContainer>

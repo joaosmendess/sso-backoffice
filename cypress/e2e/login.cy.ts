@@ -7,7 +7,7 @@ describe('Login Test', () => {
     cy.visit(`/login/${companyName}`);
 
     // Entra com o email e senha válidos
-    cy.get('#userNameInput').type('wesley@ryzzansalmanofmcom.onmicrosoft.com');
+    cy.get('#usernameInput').type('wesley@ryzzansalmanofmcom.onmicrosoft.com');
     cy.get('#passwordInput').type('password123');
 
     // Clica no botão de login
@@ -25,7 +25,7 @@ describe('Login Test', () => {
     cy.visit(`/login/${companyName}`);
 
     // Entra com o email e senha inválidos
-    cy.get('#userNameInput').type('invaliduser@example.com');
+    cy.get('#usernameInput').type('invaliduser@example.com');
     cy.get('#passwordInput').type('invalidpassword');
 
     // Clica no botão de login

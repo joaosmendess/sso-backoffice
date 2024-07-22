@@ -79,6 +79,7 @@ export const LoginButton = styled(Button)({
 
 export const SSOButton = styled(Button)(({ theme }) => ({
 textTransform:'capitalize',
+borderRadius:'5px',
   [theme.breakpoints.down('md')]: {
     width: '70%',
     

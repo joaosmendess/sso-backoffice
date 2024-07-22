@@ -9,7 +9,7 @@ describe('Register and Verify Email Test', () => {
 
     // Preenche os campos de registro
     cy.get('#nameInput').type('João Silva');
-    cy.get('#userNameInput').type('joao.silva@ofm.com.br');
+    cy.get('#usernameInput').type('joao.silva@ofm.com.br');
     cy.get('#emailInput').type(emailAddress);
     cy.get('#passwordInput').type('123456789');
 

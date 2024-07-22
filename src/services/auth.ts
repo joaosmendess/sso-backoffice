@@ -87,12 +87,12 @@ export const getUser = async (username: string): Promise<GetUserResponse> => {
  */
 export const createUser = async (
   name: string,
-  userName: string,
+  username: string,
   permissionGroup: string
 ) => {
   const response = await api.post("/users", {
     name,
-    userName,
+    username,
     permissionGroup,
   });
   return response.data;
@@ -101,7 +101,7 @@ export const createUser = async (
 /**
  * Busca a lista de usuários.
  * @param {string} [name] - Nome do usuário para filtro opcional.
- * @param {string} [userName] - Nome de usuário para filtro opcional.
+ * @param {string} [username] - Nome de usuário para filtro opcional.
  * @returns {Promise<User[]>} - Lista de usuários.
  */
 export const fetchUsers = async (
@@ -124,7 +124,7 @@ export const fetchUsers = async (
  */
 export const register = async (
   name: string,
-  userName: string,
+  username: string,
   invitationEmail: string,
   password: string,
   companyId: string,
@@ -132,7 +132,7 @@ export const register = async (
   try {
     const response = await api.post('/register', {
       name,
-      userName,
+      username,
       invitationEmail,
       password,
       company_id: companyId, // Captura o ID da company obtido na resposta da API
@@ -242,11 +242,11 @@ export const deletePermissionGroup = async (id: string) => {
 /**
  * Cria um novo módulo.
  * @param {string} name - Nome do módulo.
- * @param {number} company_id - ID da company.
+ * @param {number} companyId- ID da company.
  * @returns {Promise<any>} - Resposta da API.
  */
 export const createModule = async (name: string, company_id: number) => {
-  const response = await api.post("/modules", { name, company_id });
+  const response = await api.post("/modules", { name, companyId});
   return response.data;
 };
 
@@ -254,7 +254,7 @@ export const createModule = async (name: string, company_id: number) => {
  * Atualiza um módulo.
  * @param {string} id - ID do módulo.
  * @param {string} name - Nome do módulo.
- * @param {number} company_id - ID da company.
+ * @param {number} companyId- ID da company.
  * @returns {Promise<any>} - Resposta da API.
  */
 export const updateModule = async (
@@ -262,7 +262,7 @@ export const updateModule = async (
   name: string,
   company_id: number
 ) => {
-  const response = await api.put(`/modules/${id}`, { name, company_id });
+  const response = await api.put(`/modules/${id}`, { name, companyId});
   return response.data;
 };
 

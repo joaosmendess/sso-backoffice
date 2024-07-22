@@ -15,7 +15,7 @@ interface Product {
 
 const SelectProduct: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [userName, setUserName] = useState<string | null>(null);
+  const [username, setUserName] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
   const [companyTag, setCompanyTag] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -59,8 +59,8 @@ const SelectProduct: React.FC = () => {
 
   const handleProductSelect = (product: Product) => {
     const token = localStorage.getItem('token');
-    if (token && userName && name) {
-      window.location.href = `${product.productionUrl}/callback?token=${token}&name=${encodeURIComponent(name)}&userName=${encodeURIComponent(userName)}`;
+    if (token && username && name) {
+      window.location.href = `${product.productionUrl}/callback?token=${token}&name=${encodeURIComponent(name)}&username=${encodeURIComponent(username)}`;
     }
   };
 

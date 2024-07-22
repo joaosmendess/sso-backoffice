@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { Typography, LinearProgress, Alert, Button } from '@mui/material';
-import { validateToken, getUser } from '../../services/auth';
+import { validateToken } from '../../services/auth';
+import { checkUser } from '../../services/authService';
 import LoginHeader from '../../components/LoginHeader';
 import { FormContainer, HeaderContainer, ButtonContainer, InputField, Form } from './styles';
-import { GetUserResponse } from '../../types'; // Certifique-se de importar a interface corretamente
+import { GetUserResponse } from '../../types';
 
 const VerifySSO: React.FC = () => {
+  const { companyName: tagCompany } = useParams<{ companyName: string }>(); // Obtendo a tag da URL
   const [username, setUsername] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -59,18 +61,23 @@ const VerifySSO: React.FC = () => {
     setError(null);
 
     try {
-      const response: GetUserResponse = await getUser(username);
+      const response: GetUserResponse = await checkUser(username, tagCompany!);
       console.log('API response:', response); // Adicionando log para depuração
 
       if (response.message === 'Usuário e empresa encontrados') {
         const { company } = response;
         console.log('Company:', company); // Adicionando log para depuração
 
-        if (company && company.ssoName) {
-          const ssoUrl = `http://10.1.1.151:8000/auth/redirect?clientId=${company.clientId}&clientSecret=${company.clientSecret}&tenantId=${company.tenantId}&redirectUrl=${encodeURIComponent(company.redirectUrl)}&redirectUri=${encodeURI(company.redirectUri)}`;
-          window.location.href = ssoUrl;
+        if (response.tagCompany === tagCompany) {
+          // Se a tag do usuário coincide com a tag da URL, segue o fluxo de SSO
+          if (company && company.ssoName) {
+            const ssoUrl = `http://10.1.1.151:8000/auth/redirect?clientId=${company.clientId}&clientSecret=${company.clientSecret}&tenantId=${company.tenantId}&redirectUrl=${encodeURIComponent(company.redirectUrl)}&redirectUri=${encodeURI(company.redirectUri)}`;
+            window.location.href = ssoUrl;
+          } else {
+            setError('O usuário não tem permissão de entrar com esse SSO. Volte para a tela anterior e faça login com usuário e senha.');
+          }
         } else {
-          setError('O usuário não tem permissão de entrar com esse SSO. Volte para a tela anterior e faça login com usuário e senha.');
+          setError('A tag do usuário não coincide com a tag da empresa. Verifique suas credenciais.');
         }
       } else {
         setError('Usuário não encontrado. Verifique suas credenciais.');
@@ -121,7 +128,6 @@ const VerifySSO: React.FC = () => {
             Verificar Usuário
           </Button>
         </ButtonContainer>
-      
       </Form>
     </FormContainer>
   );
