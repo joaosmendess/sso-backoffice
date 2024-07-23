@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Typography, Button } from "@mui/material";
 import { FormContainer } from "./styles";
 import { confirmRegistration } from '../../services/registerService';
+import { getPublicCompanyId } from '../../services/companyService'; // Adjust the path as necessary
+import {jwtDecode} from 'jwt-decode'; // Don't forget to install this package
 
 // Função para extrair o token da URL
 const useQuery = () => {
@@ -38,6 +40,20 @@ const ConfirmRegistration: React.FC<ConfirmRegistrationProps> = ({ companyName }
     try {
       await confirmRegistration(token);
 
+      // Decode the token to get company_id
+      const decodedToken: any = jwtDecode(token);
+      if (!decodedToken || !decodedToken.company_id) {
+        setError('Token inválido.');
+        return;
+      }
+
+      const companyId = decodedToken.company_id;
+      const companyData = await getPublicCompanyId(companyId);
+      const companyTag = companyData.tag;
+
+      alert('Registro realizado. Por favor, aguarde a confirmação da empresa.');
+
+      navigate(`/login/${companyTag}`);
     } catch (err) {
       setError('Erro ao confirmar o registro. Por favor, tente novamente.');
     }
@@ -58,6 +74,7 @@ const ConfirmRegistration: React.FC<ConfirmRegistrationProps> = ({ companyName }
       )}
       <Button 
         type="button" 
+        id='button-registration-confirm'
         variant="contained" 
         color="primary" 
         sx={{ mt: 2, textTransform:'none' }}

@@ -20,6 +20,7 @@ export const getCompany = async () => {
   return response.data.data;
 };
 
+
 /**
  * Atualiza os dados da empresa.
  * @param {number} id - ID da empresa.
@@ -40,3 +41,14 @@ export const deleteCompany = async (id: number) => {
   const response = await api.delete(`/company/${id}`);
   return response.data;
 };
+
+
+/**
+ * Retorna nome e tag da empresa
+ * @param {number} id - ID da empresa
+ * @returns {Promise<any>} - Resposta da API.
+ */
+export const getPublicCompanyId = async (id:number) => {
+  const response = await api.get(`/public-companyId/${id}`);
+  return response.data
+} 

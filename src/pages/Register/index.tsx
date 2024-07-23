@@ -63,24 +63,21 @@ const Register: React.FC = () => {
     try {
       const response = await register(name, username, invitationEmail, password, companyId);
       if (response) {
-        setSuccessMessage('Registro bem-sucedido! Você receberá um e-mail para confirmação. Redirecionando para a página de login... ');
+        setSuccessMessage('Registro bem-sucedido! Você receberá um e-mail para confirmação. Redirecionando para a página de login...');
         setTimeout(() => {
           navigate(`/login/${companyName}`);
         }, 3000); // Redireciona após 3 segundos
       }
-    } catch (err:any ) {
+    } catch (err:any) {
       let errorMessage = 'Não foi possível completar o registro. Verifique suas informações e tente novamente.';
-      if (err.response && err.response.data && err.response.data.message) {
+      if (err.response && err.response.status) {
         // Mapear mensagens de erro específicas para mensagens amigáveis
-        switch (err.response.data.message) {
-          case 'User already exists':
-            errorMessage = 'Usuário já existe. Por favor, escolha outro nome de usuário.';
+        switch (err.response.status) {
+          case 400:
+            errorMessage = 'Dados inválidos ';
             break;
-          case 'Invalid email':
-            errorMessage = 'E-mail inválido. Por favor, insira um e-mail válido.';
-            break;
-          case 'Password too weak':
-            errorMessage = 'Senha muito fraca. Por favor, escolha uma senha mais forte.';
+          case 500:
+            errorMessage = 'Erro interno do servidor. Por favor, tente novamente mais tarde.';
             break;
           default:
             errorMessage = 'Ocorreu um erro inesperado. Por favor, tente novamente.';
@@ -194,12 +191,12 @@ const Register: React.FC = () => {
               }}
             />
             {error && (
-              <Alert severity="error" sx={{ marginBottom: '1rem', opacity: error ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>
+              <Alert severity="error" className='error-message' sx={{ marginBottom: '1rem', opacity: error ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>
                 {error}
               </Alert>
             )}
             {successMessage && (
-              <Alert severity="success" sx={{ marginBottom: '1rem', opacity: successMessage ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>
+              <Alert severity="success" className='success-message' sx={{ marginBottom: '1rem', opacity: successMessage ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>
                 {successMessage}
               </Alert>
             )}
