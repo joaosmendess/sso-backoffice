@@ -1,7 +1,9 @@
-import { useNavigate, useParams } from 'react-router-dom';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { LinearProgress, Alert, useMediaQuery, useTheme, Box, IconButton, InputAdornment, Typography, Button } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import {jwtDecode} from 'jwt-decode';
 import { register } from '../../services/registerService';
 import { getPublicCompany } from '../../services/companyService';
 import LoginHeader from '../../components/LoginHeader';
@@ -21,6 +23,12 @@ import {
   Divider,
 } from './styles';
 
+interface DecodedToken {
+  invitation_email: string;
+  company_id: string;
+  tagCompany: string;
+}
+
 const Register: React.FC = () => {
   const [name, setName] = useState('');
   const [username, setUserName] = useState('');
@@ -33,23 +41,24 @@ const Register: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const navigate = useNavigate();
-  const { companyName } = useParams<{ companyName: string }>();
+  const { companyName, token } = useParams<{ companyName: string; token: string }>();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
-    if (companyName) {
-      getPublicCompany(companyName)
-        .then(response => {
-          setCompanyId(response.id);
-        })
-        .catch(error => {
-          console.error('Error fetching company:', error);
-          navigate('/404');
-        });
+    if (token) {
+      try {
+        const decoded: DecodedToken = jwtDecode(token);
+        console.log('Decoded Token:', decoded); // Adicionando console.log para verificar os valores decodificados
+        setInvitationEmail(decoded.invitation_email);
+        setCompanyId(decoded.company_id);
+      } catch (error) {
+        console.error('Token decoding error:', error); // Adicionando console.log para erros de decodificação
+        setError('Token inválido ou expirado.');
+      }
     }
-  }, [companyName, navigate]);
+  }, [token]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,18 +72,18 @@ const Register: React.FC = () => {
     try {
       const response = await register(name, username, invitationEmail, password, companyId);
       if (response) {
-        setSuccessMessage('Registro bem-sucedido! Você receberá um e-mail para confirmação. Redirecionando para a página de login...');
+        setSuccessMessage('Registro bem-sucedido!');
         setTimeout(() => {
           navigate(`/login/${companyName}`);
         }, 3000); // Redireciona após 3 segundos
       }
-    } catch (err:any) {
+    } catch (err: any) {
       let errorMessage = 'Não foi possível completar o registro. Verifique suas informações e tente novamente.';
       if (err.response && err.response.status) {
         // Mapear mensagens de erro específicas para mensagens amigáveis
         switch (err.response.status) {
           case 400:
-            errorMessage = 'Dados inválidos ';
+            errorMessage = 'Dados inválidos';
             break;
           case 500:
             errorMessage = 'Erro interno do servidor. Por favor, tente novamente mais tarde.';
@@ -165,6 +174,7 @@ const Register: React.FC = () => {
               onChange={(e) => setInvitationEmail(e.target.value)}
               required
               margin="normal"
+              disabled // Campo de email desabilitado
             />
             <InputField
               label="Senha"
@@ -207,7 +217,7 @@ const Register: React.FC = () => {
                 variant="contained"
                 color="primary"
                 sx={{ textTransform: "none" }} 
-                disabled={!name || !username || !invitationEmail || !password || loading}
+                disabled={!name || !username || !password || loading}
               >
                 Registrar-se
               </LoginButton>
