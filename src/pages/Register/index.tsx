@@ -1,13 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { LinearProgress, Alert, useMediaQuery, useTheme, Box, IconButton, InputAdornment, Typography, Button } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {jwtDecode} from 'jwt-decode';
-import { register } from '../../services/registerService';
-import { getPublicCompany } from '../../services/companyService';
-import LoginHeader from '../../components/LoginHeader';
+import { confirmRegistration } from '../../services/registerService';
 
+import LoginHeader from '../../components/LoginHeader';
 import animated from '../../assets/olShi6AW2pQj75e9EX (1).mp4';
 
 import { 
@@ -24,8 +22,8 @@ import {
 } from './styles';
 
 interface DecodedToken {
-  invitation_email: string;
-  company_id: string;
+  invitationEmail: string;
+  companyId: string;
   tagCompany: string;
 }
 
@@ -39,26 +37,33 @@ const Register: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [companyId, setCompanyId] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [tagCompany, setTagCompany] = useState<string | null>(null);
 
   const navigate = useNavigate();
-  const { companyName, token } = useParams<{ companyName: string; token: string }>();
+  const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
-    if (token) {
+    const searchParams = new URLSearchParams(location.search);
+    const tokenParam = searchParams.get('token');
+
+    if (tokenParam) {
       try {
-        const decoded: DecodedToken = jwtDecode(token);
+        const decoded: DecodedToken = jwtDecode<DecodedToken>(tokenParam);
         console.log('Decoded Token:', decoded); // Adicionando console.log para verificar os valores decodificados
-        setInvitationEmail(decoded.invitation_email);
-        setCompanyId(decoded.company_id);
+        setInvitationEmail(decoded.invitationEmail);
+        setCompanyId(decoded.companyId);
+        setToken(tokenParam);
+        setTagCompany(decoded.tagCompany);
       } catch (error) {
         console.error('Token decoding error:', error); // Adicionando console.log para erros de decodificação
         setError('Token inválido ou expirado.');
       }
     }
-  }, [token]);
+  }, [location.search]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,11 +75,19 @@ const Register: React.FC = () => {
     setError(null);
 
     try {
-      const response = await register(name, username, invitationEmail, password, companyId);
+      if (!token) {
+        throw new Error('Token não encontrado.');
+      }
+
+      const response = await confirmRegistration(username, name, password, token);
       if (response) {
         setSuccessMessage('Registro bem-sucedido!');
         setTimeout(() => {
-          navigate(`/login/${companyName}`);
+          if (tagCompany) {
+            navigate(`/login/${tagCompany}`);
+          } else {
+            navigate(`/login`);
+          }
         }, 3000); // Redireciona após 3 segundos
       }
     } catch (err: any) {
@@ -83,7 +96,7 @@ const Register: React.FC = () => {
         // Mapear mensagens de erro específicas para mensagens amigáveis
         switch (err.response.status) {
           case 400:
-            errorMessage = 'Dados inválidos';
+            errorMessage = 'Token inválido';
             break;
           case 500:
             errorMessage = 'Erro interno do servidor. Por favor, tente novamente mais tarde.';
@@ -224,7 +237,18 @@ const Register: React.FC = () => {
               <Typography variant="body2" color="textSecondary" align="center" sx={{ marginY: 0.5 }}>
                 Já tem uma conta?
               </Typography>
-              <Button variant='text' color='primary' sx={{ textTransform: "none" }} onClick={() => navigate(`/login/${companyName}`)}>
+              <Button
+                variant='text'
+                color='primary'
+                sx={{ textTransform: "none" }}
+                onClick={() => {
+                  if (tagCompany) {
+                    navigate(`/login/${tagCompany}`);
+                  } else {
+                    navigate(`/login`);
+                  }
+                }}
+              >
                 Entrar
               </Button>
             </ButtonContainer>

@@ -5,12 +5,13 @@ export const register = async (name: string, username: string, invitationEmail: 
   return response.data;
 };
 
-
-export const confirmRegistration = async (token: string) => {
-  const response = await api.post('/confirm-registration', {}, {
+export const confirmRegistration = async (username: string, name: string, password: string, token: string) => {
+  const response = await api.post('/confirm-registration', 
+  { name, username, password }, 
+  {
     headers: {
-      Authorization: `Bearer ${token}`,
-    },
+      Authorization: `Bearer ${token}`
+    }
   });
   return response.data;
 };
