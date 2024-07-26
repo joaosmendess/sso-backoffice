@@ -3,11 +3,11 @@ import { Company } from '../types';
 
 /**
  * Obtém os dados da empresa pública.
- * @param {string} tag - Tag da empresa.
+ * @param {string} hash - Tag da empresa.
  * @returns {Promise<any>} - Dados da empresa.
  */
-export const getPublicCompany = async (tag: string) => {
-  const response = await api.get(`/public-company/${tag}`);
+export const getPublicCompany = async (hash: string) => {
+  const response = await api.get(`/public-company/${hash}`);
   return response.data;
 };
 

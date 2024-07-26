@@ -17,7 +17,7 @@ const SelectProduct: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [username, setUserName] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
-  const [companyTag, setCompanyTag] = useState<string | null>(null);
+  const [hashCompany, setHashCompany] = useState<string | null>(null);
   const navigate = useNavigate();
   const { companyName } = useParams<{ companyName: string }>();
 
@@ -25,7 +25,7 @@ const SelectProduct: React.FC = () => {
     const fetchCompanyData = async () => {
       try {
         const company = await getPublicCompany(companyName || '');
-        setCompanyTag(company.tag);
+        setHashCompany(company.tag);
       } catch (error) {
         console.error('Error fetching company:', error);
       }
@@ -51,7 +51,7 @@ const SelectProduct: React.FC = () => {
       setProducts(fetchedProducts);
       setUserName(parsedData.username);
       setName(parsedData.name);
-      setCompanyTag(parsedData.tagCompany);
+      setHashCompany(parsedData.hashCompany);
 
       fetchCompanyData();
     }
@@ -64,7 +64,7 @@ const SelectProduct: React.FC = () => {
     }
   };
 
-  const handleLogout = async () => {      
+  const handleLogout = async () => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
@@ -75,7 +75,7 @@ const SelectProduct: React.FC = () => {
     }
     localStorage.removeItem('token');
     localStorage.removeItem('customerData');
-    navigate(`/login/${companyTag}`);
+    navigate(`/login/${hashCompany}`);
   };
 
   return (

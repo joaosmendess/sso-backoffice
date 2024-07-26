@@ -22,7 +22,7 @@ interface ErrorResponse {
           }
           return 'Acesso proibido.';
         case 404:
-          return 'Recurso não encontrado.';
+          return 'Usuário não encontrado.';
         case 500:
           return 'Erro interno do servidor. Por favor, tente novamente mais tarde.';
         default:

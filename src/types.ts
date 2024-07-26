@@ -9,7 +9,7 @@ export interface UserCustomerData {
   username: string;
   company: string;
   companyId: number;
-  tagCompany:string;
+  hashCompany:string;
   permissions: UserPermission[];
 }
 

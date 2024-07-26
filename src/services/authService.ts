@@ -1,8 +1,8 @@
 import api from './apiClient';
 import { LoginResponse, GetUserResponse } from '../types';
 
-export const login = async (username: string, password: string, tag: string): Promise<LoginResponse> => {
-  const response = await api.post<LoginResponse>('/auth/login', { username, password, tag });
+export const login = async (username: string, password: string, hash: string): Promise<LoginResponse> => {
+  const response = await api.post<LoginResponse>('/auth/login', { username, password, hash });
   return response.data;
 };
 
@@ -16,8 +16,8 @@ export const getUser = async (username: string): Promise<GetUserResponse> => {
   return response.data;
 };
 
-export const checkUser = async ( username: string, tagCompany:string ): Promise<GetUserResponse> => {
-  const response = await api.get<GetUserResponse>(`/check-user/${username}?tagCompany=${tagCompany}`);
+export const checkUser = async ( username: string, hashCompany:string ): Promise<GetUserResponse> => {
+  const response = await api.get<GetUserResponse>(`/check-user/${username}?hashCompany=${hashCompany}`);
   console.log(response);
   return response.data;
 };
