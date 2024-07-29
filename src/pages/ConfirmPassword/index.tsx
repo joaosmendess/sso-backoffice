@@ -1,19 +1,34 @@
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { LinearProgress, Alert, useMediaQuery, useTheme, Box, Typography, Button } from '@mui/material';
+import { 
+  LinearProgress, 
+  Alert, 
+  useMediaQuery, 
+  useTheme, 
+  Box, 
+  Button 
+} from '@mui/material';
 import LoginHeader from '../../components/LoginHeader';
-import { sendEmailResetPassword } from '../../services/authService';
 import animated from '../../assets/41q1lZI600kL6G91Wb.mp4';
 
-import { FormContainer, HeaderContainer, ButtonContainer, InputField, Form, ImageContainer, LeftContainer, RightContainer, Divider } from './styles';
+import {
+  FormContainer,
+  HeaderContainer,
+  ButtonContainer,
+  InputField,
+  Form,
+  ImageContainer, 
+  LeftContainer,
+  RightContainer,
+  Divider,
+} from './styles';
 
-const ForgotPassword: React.FC = () => {
-  const [email, setEmail] = useState('');
+const ConfirmPassword: React.FC = () => {
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const { companyName } = useParams<{ companyName: string }>();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
@@ -23,12 +38,18 @@ const ForgotPassword: React.FC = () => {
     setLoading(true);
     setError(null);
 
+    if (password !== confirmPassword) {
+      setError('As senhas não coincidem.');
+      setLoading(false);
+      return;
+    }
+
     try {
-      await sendEmailResetPassword({ email });
+      // Adicione aqui a lógica para confirmar a nova senha
       setSubmitted(true);
       setError(null);
     } catch (err) {
-      setError('Falha ao enviar o email de recuperação. Verifique suas informações.');
+      setError('Falha ao redefinir a senha. Verifique suas informações.');
     } finally {
       setLoading(false);
     }
@@ -73,45 +94,46 @@ const ForgotPassword: React.FC = () => {
             <LoginHeader />
           </HeaderContainer>
           <Form onSubmit={handleSubmit}>
-            <InputField
-              label="Email"
-              id="input-email"
-              variant="outlined"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              margin="normal"
-            />
+          <InputField
+  label="Nova Senha"
+  id="input-new-password"
+  variant="outlined"
+  type="password"
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+  required
+  margin="normal"
+/>
+<InputField
+  label="Confirmar Nova Senha"
+  id="input-confirm-password"
+  variant="outlined"
+  type="password"
+  value={confirmPassword}
+  onChange={(e) => setConfirmPassword(e.target.value)}
+  required
+  margin="normal"
+/>
             {error && (
               <Alert severity="error" sx={{ marginBottom: '1rem', opacity: error ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>
                 {error}
               </Alert>
             )}
             {submitted && (
-              <Alert severity="success">Se um email correspondente for encontrado, você receberá instruções para redefinir sua senha.</Alert>
+              <Alert severity="success">Sua senha foi redefinida com sucesso.</Alert>
             )}
             <ButtonContainer>
-              <Button
-                sx={{textTransform: 'none' }}
-                type="submit"
-                id="button-send-email"
-                variant="contained"
-                color="primary"
-                disabled={!email || loading}
-              >
-                Enviar
-              </Button>
-              <Typography 
-                variant="body2" 
-                color="#1465C0" 
-                align="center" 
-                sx={{ marginY: 0, textDecoration:'none' }}
-                component={Link}
-                to={`/login/${companyName}`}
-              >
-                Lembrou sua senha?
-              </Typography>
+            <Button
+  id="button-reset-password"
+  sx={{textTransform: 'none' }}
+  type="submit"
+  variant="contained"
+  color="primary"
+  disabled={loading || !password || !confirmPassword}
+>
+  Redefinir senha
+</Button>
+           
             </ButtonContainer>
           </Form>
         </RightContainer>
@@ -120,4 +142,4 @@ const ForgotPassword: React.FC = () => {
   );
 };
 
-export default ForgotPassword;
+export default ConfirmPassword;

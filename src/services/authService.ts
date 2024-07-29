@@ -35,3 +35,17 @@ export const verifyToken = async (token: string): Promise<boolean> => {
     return false;
   }
 };
+
+export const sendEmailResetPassword = async (data: { email: string }) => {
+  const response = await api.post('password/reset', data);
+  return response.data;
+};
+
+
+export const setNewPassword = async (data: { token: string, password: string, password_confirmation: string }) => {
+  const response = await api.post(`password/reset/confirm?token=${data.token}`, {
+    password: data.password,
+    password_confirmation: data.password_confirmation
+  });
+  return response.data; // Retorne a resposta completa
+};

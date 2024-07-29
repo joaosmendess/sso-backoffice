@@ -198,6 +198,7 @@ const Login: React.FC = () => {
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
               <Link 
                 component="button" 
+                id="link-forgot-password"
                 variant="body2" 
                 onClick={handleForgotPasswordNavigation} 
                 underline="none"

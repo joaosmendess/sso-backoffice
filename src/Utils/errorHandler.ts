@@ -20,7 +20,7 @@ interface ErrorResponse {
           if (data.error === 'Usuário não autorizado para essa empresa') {
             return 'Usuário não autorizado para essa empresa.';
           }
-          return 'Acesso proibido.';
+          return 'Usuário ou senha incorretos ou Usuário inativo.';
         case 404:
           return 'Usuário não encontrado.';
         case 500:

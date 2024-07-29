@@ -13,6 +13,7 @@ import globalStyles from './globalStyles';
 import SetNewPassword from './pages/SetNewPassword';
 
 
+
 const App: React.FC = () => {
   globalStyles();
 

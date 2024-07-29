@@ -1,31 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  LinearProgress, 
-  Alert, 
-  useMediaQuery, 
-  useTheme, 
-  Box, 
-  Typography, 
-  Button, 
-  IconButton, 
-  InputAdornment 
-} from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { LinearProgress, Alert, useMediaQuery, useTheme, Box, Typography, Button, IconButton, InputAdornment, TextField } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-
+import { setNewPassword } from '../../services/authService';
 import animated from '../../assets/41q1lZI600kL6G91Wb.mp4';
 
-import {
-  FormContainer,
-  HeaderContainer,
-  ButtonContainer,
-  InputField,
-  Form,
-  ImageContainer,
-  LeftContainer,
-  RightContainer,
-  Divider,
-} from './styles';
+import { FormContainer, HeaderContainer, ButtonContainer, Form, ImageContainer, LeftContainer, RightContainer, Divider } from './styles';
 
 const SetNewPassword: React.FC = () => {
   const [password, setPassword] = useState('');
@@ -37,10 +17,13 @@ const SetNewPassword: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  
+  const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
+
+  // Extrair o token da query string
+  const token = new URLSearchParams(location.search).get('token');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -53,10 +36,17 @@ const SetNewPassword: React.FC = () => {
       return;
     }
 
+    if (!token) {
+      setError('Token de redefinição inválido.');
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Lógica para enviar a nova senha usando o token
+      const response = await setNewPassword({ token, password, password_confirmation: confirmPassword });
       setSubmitted(true);
       setError(null);
+      navigate(`/login/${response.hashCompany}`);
     } catch (err) {
       setError('Falha ao redefinir a senha. Verifique suas informações.');
     } finally {
@@ -78,6 +68,7 @@ const SetNewPassword: React.FC = () => {
 
   return (
     <Box
+      id="set-new-password-page"
       sx={{
         display: 'flex',
         justifyContent: 'center',
@@ -117,9 +108,9 @@ const SetNewPassword: React.FC = () => {
             </Typography>
           </HeaderContainer>
           <Form onSubmit={handleSubmit}>
-            <InputField
+            <TextField
               label="Nova Senha"
-              id="input-password"
+              id="input-new-password"
               variant="outlined"
               type={showPassword ? 'text' : 'password'}
               value={password}
@@ -141,9 +132,9 @@ const SetNewPassword: React.FC = () => {
                 ),
               }}
             />
-            <InputField
+            <TextField
               label="Confirmar Nova Senha"
-              id="input-password-confirmation"
+              id="input-confirm-password"
               variant="outlined"
               type={showConfirmPassword ? 'text' : 'password'}
               value={confirmPassword}
@@ -175,6 +166,7 @@ const SetNewPassword: React.FC = () => {
             )}
             <ButtonContainer>
               <Button
+              sx={{textTransform:'none'}}
                 type="submit"
                 id="button-set-new-password"
                 variant="contained"
@@ -183,12 +175,7 @@ const SetNewPassword: React.FC = () => {
               >
                 Redefinir Senha
               </Button>
-              <Typography variant="body2" color="textSecondary" align="center" sx={{ marginY: 0 }}>
-                Lembrou sua senha?
-              </Typography>
-              <Button variant='text' color='primary' onClick={() => navigate(`/login`)}>
-                Entrar
-              </Button>
+           
             </ButtonContainer>
           </Form>
         </RightContainer>
