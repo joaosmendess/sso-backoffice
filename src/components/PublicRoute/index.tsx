@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
-import { getPublicCompany } from '../../services/auth';
+import { getPublicCompany } from '../../services/companyService';
 
 interface PublicRouteProps {
   children: JSX.Element;

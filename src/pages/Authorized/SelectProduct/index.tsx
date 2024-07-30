@@ -25,7 +25,7 @@ const SelectProduct: React.FC = () => {
     const fetchCompanyData = async () => {
       try {
         const company = await getPublicCompany(companyName || '');
-        setHashCompany(company.tag);
+        setHashCompany(company.hashCompany);
       } catch (error) {
         console.error('Error fetching company:', error);
       }

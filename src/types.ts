@@ -81,6 +81,7 @@ export interface CompanyDetails {
   tenantId: string;
   redirectUrl: string;  
   redirectUri: string;
+  hashCompany:string;
 
 }
 

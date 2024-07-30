@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { Typography, LinearProgress, Alert, Button } from '@mui/material';
-import { validateToken } from '../../services/auth';
+import { validateToken } from '../../services/authService'; 
 import { checkUser } from '../../services/authService';
 import LoginHeader from '../../components/LoginHeader';
 import { FormContainer, HeaderContainer, ButtonContainer, InputField, Form } from './styles';
@@ -19,7 +19,7 @@ const VerifySSO: React.FC = () => {
 
   useEffect(() => {
     const handleMessage = async (event: MessageEvent) => {
-      if (event.origin !== 'http://10.1.1.151:8000') return;
+      if (event.origin !== 'http://localhost:8000') return;
 
       const { token, customerData } = event.data;
       console.log('Received token and customerData:', token, customerData);
@@ -68,10 +68,11 @@ const VerifySSO: React.FC = () => {
         const { company } = response;
         console.log('Company:', company); // Adicionando log para depuração
 
-        if (response.tagCompany === tagCompany) {
+        if (response.company.hashCompany === tagCompany) {
           // Se a tag do usuário coincide com a tag da URL, segue o fluxo de SSO
           if (company && company.ssoName) {
-            const ssoUrl = `http://10.1.1.151:8000/auth/redirect?clientId=${company.clientId}&clientSecret=${company.clientSecret}&tenantId=${company.tenantId}&redirectUrl=${encodeURIComponent(company.redirectUrl)}&redirectUri=${encodeURI(company.redirectUri)}`;
+            const ssoUrl = `http://localhost:8000/auth/redirect?clientId=${company.clientId}&clientSecret=${company.clientSecret}&tenantId=${company.tenantId}&redirectUrl=${encodeURIComponent(company.redirectUrl)}&redirectUri=${encodeURI(company.redirectUri)}`;
+            console.log('Redirecionando para:', ssoUrl); // Log do URL de redirecionamento
             window.location.href = ssoUrl;
           } else {
             setError('O usuário não tem permissão de entrar com esse SSO. Volte para a tela anterior e faça login com usuário e senha.');
@@ -105,7 +106,7 @@ const VerifySSO: React.FC = () => {
       <Form>
         <InputField
           label="Usuário"
-          id='username'
+          id='input-username'
           variant="outlined"
           type="text"
           value={username}
@@ -121,6 +122,7 @@ const VerifySSO: React.FC = () => {
         <ButtonContainer>
           <Button
             variant="contained"
+            id='button-verify-username'
             color="primary"
             onClick={handleVerifyUser}
             disabled={!username || loading}

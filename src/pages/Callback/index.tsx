@@ -29,7 +29,7 @@ const CallbackPage = () => {
     const handleTokenValidation = async (token:string) => {
       try {
         console.log('Validating token with server:', token);
-        const response = await fetch('http://10.1.151:8000/api/auth/validate-jwt', {
+        const response = await fetch('http://localhost:8000/api/auth/validate-jwt', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

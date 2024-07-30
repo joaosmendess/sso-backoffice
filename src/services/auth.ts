@@ -12,7 +12,7 @@ import {
 } from "../types";
 
 const api = axios.create({
-  baseURL: "http://10.1.1.151:8000/api",
+  baseURL: "http://localhost:8000/api",
 });
 
 api.interceptors.request.use(
@@ -283,7 +283,7 @@ export const deleteModule = async (id: string) => {
  */
 export const validateToken = async (token: string) => {
   const response = await axios.post(
-    "http://localhost:8989/auth/validate-jwt",
+    "http://localhost:8000/auth/validate-jwt",
     { token }
   );
   return response.data;
