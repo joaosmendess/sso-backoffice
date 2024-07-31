@@ -153,7 +153,7 @@ const Login: React.FC = () => {
               }}
             />
             {error && (
-              <Alert severity="error" sx={{ marginBottom: '1rem', opacity: error ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>
+              <Alert  className='MuiAlert-message'  severity="error" sx={{ marginBottom: '1rem', opacity: error ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>
                 {error}
               </Alert>
             )}
